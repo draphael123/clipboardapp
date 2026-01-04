@@ -33,8 +33,10 @@ build/
 *.crx
 *.pem
 *.zip
+!clipboard-extension.zip
 
 # Icons (optional - users can add their own)
 icons/*.png
 !icons/README.md
 
+.vercel

@@ -16,15 +16,23 @@ A powerful clipboard manager browser extension that can store up to 5000 clipboa
 
 ### Browser Extension
 
-1. Open Chrome/Edge and navigate to `chrome://extensions/` (or `edge://extensions/`)
-2. Enable "Developer mode" (toggle in the top right)
-3. Click "Load unpacked"
-4. Select the folder containing the extension files
-5. The extension icon should now appear in your browser toolbar
+**Quick Install:**
+1. Visit the [live web interface](https://clipboardapp.vercel.app) and click "Download Extension"
+2. Or download directly from [GitHub](https://github.com/draphael123/clipboardapp/archive/refs/heads/main.zip)
+3. Extract the zip file
+4. Open Chrome/Edge and navigate to `chrome://extensions/` (or `edge://extensions/`)
+5. Enable "Developer mode" (toggle in the top right)
+6. Click "Load unpacked"
+7. Select the extracted folder containing the extension files
+8. The extension icon should now appear in your browser toolbar!
+
+**Detailed instructions:** See [INSTALL.md](INSTALL.md) for step-by-step guide.
 
 ### Web Interface
 
-Simply open `index.html` in your web browser. The web interface works standalone and can sync with the extension.
+Visit the live site: **[https://clipboardapp.vercel.app](https://clipboardapp.vercel.app)**
+
+Or run locally by opening `index.html` in your web browser. The web interface works standalone and can sync with the extension.
 
 ## Usage
 

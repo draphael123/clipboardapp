@@ -1,0 +1,11 @@
+{
+  "name": "clipboard-manager-extension",
+  "version": "1.0.0",
+  "description": "Clipboard Manager Browser Extension",
+  "scripts": {
+    "package": "node package-extension.js"
+  },
+  "devDependencies": {
+    "archiver": "^6.0.2"
+  }
+}
