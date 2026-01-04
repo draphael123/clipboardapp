@@ -1059,9 +1059,4 @@ function showToast(message, type = 'info') {
 // Make functions globally available
 window.toggleSelection = toggleSelection;
 window.removeTag = removeTag;
-window.clearSelection = function() {
-  selectedItems.clear();
-  renderItems();
-  if (bulkActionsBar) bulkActionsBar.classList.remove('show');
-};
 
