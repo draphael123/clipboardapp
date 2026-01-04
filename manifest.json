@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Clipboard Manager",
+  "version": "1.0.0",
+  "description": "Advanced clipboard manager that stores up to 5000 items with sync to web interface",
+  "permissions": [
+    "clipboardRead",
+    "clipboardWrite",
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost/*",
+    "https://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
+}
+
+

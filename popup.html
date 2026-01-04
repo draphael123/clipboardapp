@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clipboard Manager</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>📋 Clipboard Manager</h1>
+      <div class="header-actions">
+        <button id="clearAll" class="btn-icon" title="Clear All">🗑️</button>
+        <button id="syncBtn" class="btn-icon" title="Sync to Web">🌐</button>
+        <button id="settingsBtn" class="btn-icon" title="Settings">⚙️</button>
+      </div>
+    </header>
+    
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search clipboard items...">
+      <span class="search-icon">🔍</span>
+    </div>
+    
+    <div class="stats">
+      <span id="itemCount">0 / 5000 items</span>
+      <button id="addManual" class="btn-small">+ Add Item</button>
+    </div>
+    
+    <div class="clipboard-list" id="clipboardList">
+      <div class="empty-state">
+        <p>📋 Your clipboard history will appear here</p>
+        <p class="hint">Start copying text to see it here!</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Add Item Modal -->
+  <div id="addModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Add Clipboard Item</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <textarea id="addItemText" placeholder="Paste or type text here..."></textarea>
+      <div class="modal-actions">
+        <button id="cancelAdd" class="btn-secondary">Cancel</button>
+        <button id="saveAdd" class="btn-primary">Add</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
+
+

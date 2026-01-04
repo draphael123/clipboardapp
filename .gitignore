@@ -1,0 +1,40 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp
+
+# Node modules (if you add any later)
+node_modules/
+
+# Build files
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+
+# Extension packaging
+*.crx
+*.pem
+*.zip
+
+# Icons (optional - users can add their own)
+icons/*.png
+!icons/README.md
+
