@@ -169,6 +169,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true;
   }
+  
+  if (request.action === 'updateItem') {
+    chrome.storage.local.get([STORAGE_KEY], (result) => {
+      let items = result[STORAGE_KEY] || [];
+      const index = items.findIndex(item => item.id === request.item.id);
+      if (index !== -1) {
+        items[index] = request.item;
+      } else {
+        items.push(request.item);
+      }
+      chrome.storage.local.set({ [STORAGE_KEY]: items }, () => {
+        sendResponse({ success: true });
+      });
+    });
+    return true;
+  }
 });
 
 // Start monitoring on startup

@@ -11,6 +11,7 @@
     <header>
       <h1>📋 Clipboard Manager</h1>
       <div class="header-actions">
+        <button id="darkModeToggle" class="btn-icon" title="Toggle Dark Mode">🌙</button>
         <button id="clearAll" class="btn-icon" title="Clear All">🗑️</button>
         <button id="syncBtn" class="btn-icon" title="Sync to Web">🌐</button>
         <button id="settingsBtn" class="btn-icon" title="Settings">⚙️</button>
@@ -18,13 +19,41 @@
     </header>
     
     <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="Search clipboard items...">
+      <input type="text" id="searchInput" placeholder="Search... (Ctrl+F)">
       <span class="search-icon">🔍</span>
+    </div>
+    
+    <div class="toolbar-compact">
+      <select id="sortSelect" class="select-small" title="Sort">
+        <option value="newest">Newest</option>
+        <option value="oldest">Oldest</option>
+        <option value="alphabetical">A-Z</option>
+        <option value="length">Length</option>
+        <option value="usage">Most Used</option>
+        <option value="favorites">Favorites</option>
+      </select>
+      <select id="filterSelect" class="select-small" title="Filter">
+        <option value="all">All</option>
+        <option value="favorites">⭐ Favorites</option>
+        <option value="urls">🔗 URLs</option>
+        <option value="emails">📧 Emails</option>
+        <option value="code">💻 Code</option>
+      </select>
+      <button id="favoritesBtn" class="btn-small" title="Show Favorites">⭐</button>
+      <button id="statsBtn" class="btn-small" title="Statistics">📊</button>
     </div>
     
     <div class="stats">
       <span id="itemCount">0 / 5000 items</span>
-      <button id="addManual" class="btn-small">+ Add Item</button>
+      <button id="addManual" class="btn-small">+ Add</button>
+    </div>
+    
+    <!-- Bulk Actions -->
+    <div id="bulkActionsBar" class="bulk-actions-bar">
+      <span id="selectedCount">0</span> selected
+      <button id="selectAllBtn" class="btn-tiny">All</button>
+      <button id="bulkDeleteBtn" class="btn-tiny btn-danger">Delete</button>
+      <button class="btn-tiny" onclick="clearSelection()">Clear</button>
     </div>
     
     <div class="clipboard-list" id="clipboardList">
@@ -50,8 +79,99 @@
     </div>
   </div>
   
+  <!-- Item Detail Modal -->
+  <div id="itemModal" class="modal">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2>Clipboard Item</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="item-detail-meta">
+          <div class="item-info">
+            <span id="itemTime"></span>
+            <span id="itemType" class="item-type-badge"></span>
+            <span id="itemStats" class="item-stats"></span>
+          </div>
+          <div class="item-detail-actions">
+            <button id="copyDetailBtn" class="btn btn-primary btn-small">📋 Copy</button>
+            <button id="favoriteDetailBtn" class="btn btn-secondary btn-small">☆</button>
+            <button id="deleteDetailBtn" class="btn btn-danger btn-small">🗑️</button>
+          </div>
+        </div>
+        <div class="item-tags-section">
+          <label>Tags:</label>
+          <div id="itemTags" class="item-tags"></div>
+          <div class="add-tag-input">
+            <input type="text" id="newTagInput" placeholder="Add tag...">
+            <button id="addTagBtn" class="btn btn-small">Add</button>
+          </div>
+        </div>
+        <textarea id="itemDetailText" readonly></textarea>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="autoCapture">
+            Auto-capture clipboard
+          </label>
+        </div>
+        <div class="setting-item">
+          <label>
+            <input type="checkbox" id="ignoreDuplicates">
+            Ignore duplicates
+          </label>
+        </div>
+        <div class="setting-item">
+          <label>
+            Minimum text length:
+            <input type="number" id="minLength" value="1" min="1">
+          </label>
+        </div>
+        <div class="modal-actions">
+          <button id="saveSettings" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Stats Modal -->
+  <div id="statsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Statistics</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-label">Total Items</div>
+            <div class="stat-card-value" id="statsTotal">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Favorites</div>
+            <div class="stat-card-value" id="statsFavorites">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Total Copies</div>
+            <div class="stat-card-value" id="statsCopies">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <script src="popup.js"></script>
 </body>
 </html>
-
 
