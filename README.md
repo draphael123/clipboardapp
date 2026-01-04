@@ -100,6 +100,24 @@ The extension requires the following permissions:
 - Items are sorted by most recent first
 - The extension works best with text content
 
+## Deployment
+
+### Deploy Web Interface to Vercel
+
+The web interface can be easily deployed to Vercel:
+
+1. **Push to GitHub** (see `DEPLOY.md` for instructions)
+
+2. **Deploy to Vercel**:
+   - Go to [vercel.com](https://vercel.com) and sign in
+   - Click "Add New..." → "Project"
+   - Import your GitHub repository
+   - Click "Deploy" (Vercel auto-detects static sites)
+
+3. Your web interface will be live at: `https://your-project.vercel.app`
+
+For detailed deployment instructions, see [`DEPLOY.md`](DEPLOY.md).
+
 ## License
 
 This project is open source and available for personal and commercial use.
