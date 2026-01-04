@@ -16,33 +16,74 @@ chrome.runtime.onInstalled.addListener(() => {
   startMonitoring();
 });
 
-// Start clipboard monitoring
+// Start clipboard monitoring - Enhanced for automatic capture
 function startMonitoring() {
   if (isMonitoring) return;
   isMonitoring = true;
   
-  // Primary method: Listen for copy events from content scripts
-  // This is handled by the message listener below
-  
-  // Fallback: Periodic check (less frequent)
-  setInterval(async () => {
-    try {
-      // Only check if we haven't received a copy event recently
-      const text = await getClipboardText();
-      
-      if (text && text !== lastClipboardText && text.trim().length > 0) {
-        lastClipboardText = text;
-        await addClipboardItem(text);
-      }
-    } catch (error) {
-      // Silently fail - clipboard access is limited
+  // Check settings for auto-capture
+  chrome.storage.local.get(['settings'], (result) => {
+    const settings = result.settings || {};
+    const autoCapture = settings.autoCapture !== false; // Default to true
+    
+    if (!autoCapture) {
+      console.log('Auto-capture is disabled in settings');
+      return;
     }
-  }, 2000); // Check every 2 seconds as fallback
+    
+    // Primary method: Listen for copy events from content scripts
+    // This is handled by the message listener below
+    
+    // Enhanced fallback: More frequent polling to catch all clipboard changes
+    // This helps capture clipboard changes from outside the browser
+    setInterval(async () => {
+      try {
+        // Check all tabs for clipboard changes
+        const tabs = await chrome.tabs.query({});
+        
+        // Try to read clipboard from active tabs first
+        for (const tab of tabs.slice(0, 5)) { // Check up to 5 tabs
+          try {
+            chrome.tabs.sendMessage(tab.id, { action: 'checkClipboard' }, (response) => {
+              // Response handled by content script
+            });
+          } catch (error) {
+            // Tab might not have content script, skip
+          }
+        }
+        
+        // Also try direct clipboard read from active tab
+        const activeTabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (activeTabs[0]) {
+          const text = await getClipboardText(activeTabs[0].id);
+          if (text && text !== lastClipboardText && text.trim().length > 0) {
+            lastClipboardText = text;
+            await addClipboardItem(text);
+          }
+        }
+      } catch (error) {
+        // Silently fail - clipboard access is limited
+      }
+    }, 500); // Check every 500ms for more responsive capture
+  });
 }
 
-// Get clipboard text (fallback method)
-async function getClipboardText() {
+// Get clipboard text (fallback method) - Enhanced
+async function getClipboardText(tabId = null) {
   try {
+    // If tabId provided, use it directly
+    if (tabId) {
+      return new Promise((resolve) => {
+        chrome.tabs.sendMessage(tabId, { action: 'getClipboard' }, (response) => {
+          if (chrome.runtime.lastError) {
+            resolve('');
+          } else {
+            resolve(response?.text || '');
+          }
+        });
+      });
+    }
+    
     // Try to read from active tab
     const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
     if (tabs[0]) {
@@ -62,13 +103,38 @@ async function getClipboardText() {
   return '';
 }
 
-// Add clipboard item to storage
+// Add clipboard item to storage - Enhanced with settings check
 async function addClipboardItem(text) {
   return new Promise((resolve) => {
-    chrome.storage.local.get([STORAGE_KEY], (result) => {
+    // Check settings first
+    chrome.storage.local.get(['settings', STORAGE_KEY], (result) => {
+      const settings = result.settings || {};
+      const autoCapture = settings.autoCapture !== false; // Default to true
+      const ignoreDuplicates = settings.ignoreDuplicates === true;
+      const minLength = settings.minLength || 1;
+      
+      // Check if auto-capture is enabled
+      if (!autoCapture) {
+        resolve();
+        return;
+      }
+      
+      // Check minimum length
+      if (text.trim().length < minLength) {
+        resolve();
+        return;
+      }
+      
       let items = result[STORAGE_KEY] || [];
       
-      // Remove duplicate if exists
+      // Check for duplicates
+      const isDuplicate = items.some(item => item.text === text);
+      if (ignoreDuplicates && isDuplicate) {
+        resolve();
+        return;
+      }
+      
+      // Remove duplicate if exists (move to top)
       items = items.filter(item => item.text !== text);
       
       // Add new item at the beginning
@@ -76,7 +142,13 @@ async function addClipboardItem(text) {
         id: Date.now().toString(),
         text: text,
         timestamp: Date.now(),
-        preview: text.substring(0, 100)
+        preview: text.substring(0, 100),
+        copyCount: 0,
+        isFavorite: false,
+        tags: [],
+        type: detectItemType(text),
+        wordCount: countWords(text),
+        charCount: text.length
       };
       
       items.unshift(newItem);
@@ -98,9 +170,30 @@ async function addClipboardItem(text) {
   });
 }
 
+// Helper functions for item enhancement
+function detectItemType(text) {
+  if (!text) return 'text';
+  const urlPattern = /^https?:\/\/.+/i;
+  if (urlPattern.test(text.trim())) return 'url';
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (emailPattern.test(text.trim())) return 'email';
+  if (text.includes('function') || text.includes('const ') || text.includes('var ') || 
+      (text.includes('{') && text.includes('}'))) return 'code';
+  try {
+    JSON.parse(text);
+    return 'json';
+  } catch {}
+  if (/^\d+$/.test(text.trim())) return 'number';
+  return 'text';
+}
+
+function countWords(text) {
+  return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+}
+
 // Handle messages from popup and content scripts
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // Handle copy events from content scripts
+  // Handle copy events from content scripts - Enhanced
   if (request.action === 'clipboardCopied') {
     const text = request.text;
     if (text && text !== lastClipboardText && text.trim().length > 0) {
@@ -108,7 +201,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       addClipboardItem(text).then(() => {
         sendResponse({ success: true });
       });
-      return true;
+      return true; // Keep channel open for async response
     }
     sendResponse({ success: false });
     return true;
