@@ -1,13 +1,35 @@
 {
   "version": 2,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*\\.(css|js|zip|xml|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot))",
-      "destination": "/$1"
+      "src": "index.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/styles.css",
+      "dest": "/styles.css"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/app-enhanced.js",
+      "dest": "/app-enhanced.js"
+    },
+    {
+      "src": "/app.js",
+      "dest": "/app.js"
+    },
+    {
+      "src": "/clipboard-extension.zip",
+      "dest": "/clipboard-extension.zip"
+    },
+    {
+      "src": "/updates.xml",
+      "dest": "/updates.xml"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ],
   "headers": [
