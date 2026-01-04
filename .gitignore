@@ -42,9 +42,11 @@ public/*.zip
 !public/updates.xml
 
 # Icons - allow generated icons
-!icons/icon*.png
-!icons/icon.svg
 icons/*.png
+!icons/icon16.png
+!icons/icon48.png
+!icons/icon128.png
+!icons/icon.svg
 !icons/README.md
 
 .vercel
