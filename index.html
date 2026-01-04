@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Advanced clipboard manager with 5000 item capacity, search, tags, favorites, and more">
   <title>Clipboard Manager - Web Interface</title>
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -10,7 +11,10 @@
   <div class="app-container">
     <header>
       <div class="header-content">
-        <h1>📋 Clipboard Manager</h1>
+        <div class="header-top">
+          <h1>📋 Clipboard Manager</h1>
+          <button id="darkModeToggle" class="btn-icon" aria-label="Toggle dark mode">🌙</button>
+        </div>
         <p class="subtitle">✨ Manage your clipboard history across all devices</p>
         <div class="download-section">
           <a href="https://github.com/draphael123/clipboardapp/archive/refs/heads/main.zip" id="downloadExtension" class="btn-download" target="_blank">
@@ -24,15 +28,42 @@
     <main class="main-content">
       <div class="toolbar">
         <div class="search-container">
-          <input type="text" id="searchInput" placeholder="Search clipboard items...">
+          <input type="text" id="searchInput" placeholder="Search clipboard items... (Ctrl+K)" aria-label="Search clipboard items">
           <span class="search-icon">🔍</span>
         </div>
         <div class="toolbar-actions">
-          <button id="importBtn" class="btn btn-secondary">📥 Import</button>
-          <button id="exportBtn" class="btn btn-secondary">📤 Export</button>
-          <button id="clearAllBtn" class="btn btn-danger">🗑️ Clear All</button>
-          <button id="syncBtn" class="btn btn-primary">🔄 Sync from Extension</button>
+          <select id="sortSelect" class="btn btn-secondary" title="Sort items">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="alphabetical">Alphabetical</option>
+            <option value="length">By Length</option>
+            <option value="usage">Most Used</option>
+            <option value="favorites">Favorites First</option>
+          </select>
+          <select id="filterSelect" class="btn btn-secondary" title="Filter items">
+            <option value="all">All Items</option>
+            <option value="favorites">Favorites</option>
+            <option value="urls">URLs</option>
+            <option value="emails">Emails</option>
+            <option value="code">Code</option>
+          </select>
+          <button id="favoritesBtn" class="btn btn-secondary" title="Show favorites">⭐ Favorites</button>
+          <button id="duplicateBtn" class="btn btn-secondary" title="Find duplicates (Ctrl+D)">🔍 Duplicates</button>
+          <button id="statsBtn" class="btn btn-secondary" title="View statistics">📊 Stats</button>
+          <button id="importBtn" class="btn btn-secondary" title="Import data (Ctrl+I)">📥 Import</button>
+          <button id="exportBtn" class="btn btn-secondary" title="Export data (Ctrl+E)">📤 Export</button>
+          <button id="clearAllBtn" class="btn btn-danger" title="Clear all items">🗑️ Clear All</button>
+          <button id="syncBtn" class="btn btn-primary" title="Sync from extension">🔄 Sync</button>
         </div>
+      </div>
+      
+      <!-- Bulk Actions Bar -->
+      <div id="bulkActionsBar" class="bulk-actions-bar">
+        <span id="selectedCount">0</span> item(s) selected
+        <button id="selectAllBtn" class="btn btn-small">Select All</button>
+        <button id="bulkDeleteBtn" class="btn btn-danger btn-small">Delete Selected</button>
+        <button id="bulkExportBtn" class="btn btn-primary btn-small">Export Selected</button>
+        <button class="btn btn-secondary btn-small" onclick="clearSelection()">Clear Selection</button>
       </div>
       
       <div class="stats-bar">
@@ -55,42 +86,59 @@
           <div class="empty-icon">📋</div>
           <h2>No Clipboard Items</h2>
           <p>Your clipboard history will appear here</p>
-          <p class="hint">Sync from extension or import data to get started</p>
+          <p class="hint">Sync from extension, import data, or start copying to get started</p>
+          <div class="empty-actions">
+            <button class="btn btn-primary" onclick="document.getElementById('importBtn').click()">📥 Import Data</button>
+            <button class="btn btn-secondary" onclick="document.getElementById('syncBtn').click()">🔄 Sync Extension</button>
+          </div>
         </div>
       </div>
     </main>
   </div>
   
   <!-- Item Detail Modal -->
-  <div id="itemModal" class="modal">
+  <div id="itemModal" class="modal" role="dialog" aria-labelledby="itemModalTitle">
     <div class="modal-content large">
       <div class="modal-header">
-        <h2>Clipboard Item</h2>
-        <button class="close-modal">&times;</button>
+        <h2 id="itemModalTitle">Clipboard Item</h2>
+        <button class="close-modal" aria-label="Close">&times;</button>
       </div>
       <div class="modal-body">
         <div class="item-detail-meta">
-          <span id="itemTime"></span>
+          <div class="item-info">
+            <span id="itemTime"></span>
+            <span id="itemType" class="item-type-badge"></span>
+            <span id="itemStats" class="item-stats"></span>
+          </div>
           <div class="item-detail-actions">
             <button id="copyDetailBtn" class="btn btn-primary">📋 Copy</button>
+            <button id="favoriteDetailBtn" class="btn btn-secondary">☆ Favorite</button>
             <button id="deleteDetailBtn" class="btn btn-danger">🗑️ Delete</button>
           </div>
         </div>
-        <textarea id="itemDetailText" readonly></textarea>
+        <div class="item-tags-section">
+          <label>Tags:</label>
+          <div id="itemTags" class="item-tags"></div>
+          <div class="add-tag-input">
+            <input type="text" id="newTagInput" placeholder="Add tag...">
+            <button id="addTagBtn" class="btn btn-small">Add</button>
+          </div>
+        </div>
+        <textarea id="itemDetailText" readonly aria-label="Clipboard item content"></textarea>
       </div>
     </div>
   </div>
   
   <!-- Import Modal -->
-  <div id="importModal" class="modal">
+  <div id="importModal" class="modal" role="dialog" aria-labelledby="importModalTitle">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Import Clipboard Data</h2>
-        <button class="close-modal">&times;</button>
+        <h2 id="importModalTitle">Import Clipboard Data</h2>
+        <button class="close-modal" aria-label="Close">&times;</button>
       </div>
       <div class="modal-body">
-        <p>Paste your exported JSON data below:</p>
-        <textarea id="importText" placeholder='[{"id":"...","text":"...","timestamp":...}]'></textarea>
+        <p>Paste your exported JSON data below or select a file:</p>
+        <textarea id="importText" placeholder='[{"id":"...","text":"...","timestamp":...}]' aria-label="Import JSON data"></textarea>
         <div class="modal-actions">
           <button id="cancelImport" class="btn btn-secondary">Cancel</button>
           <button id="confirmImport" class="btn btn-primary">Import</button>
@@ -99,9 +147,84 @@
     </div>
   </div>
   
-  <input type="file" id="fileInput" accept=".json" style="display: none;">
+  <!-- Export Modal -->
+  <div id="exportModal" class="modal" role="dialog" aria-labelledby="exportModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="exportModalTitle">Export Clipboard Data</h2>
+        <button class="close-modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Select export format:</p>
+        <select id="exportFormat" class="btn btn-secondary" style="width: 100%; margin-bottom: 20px;">
+          <option value="json">JSON</option>
+          <option value="csv">CSV</option>
+          <option value="txt">Plain Text</option>
+          <option value="md">Markdown</option>
+        </select>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="document.getElementById('exportModal').classList.remove('show')">Cancel</button>
+          <button class="btn btn-primary" onclick="handleExport()">Export</button>
+        </div>
+      </div>
+    </div>
+  </div>
   
-  <script src="app.js"></script>
+  <!-- Duplicate Modal -->
+  <div id="duplicateModal" class="modal" role="dialog" aria-labelledby="duplicateModalTitle">
+    <div class="modal-content large">
+      <div class="modal-header">
+        <h2 id="duplicateModalTitle">Duplicate Items</h2>
+        <button class="close-modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Found duplicate items. Select which ones to remove:</p>
+        <div id="duplicateList" class="duplicate-list"></div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" onclick="document.getElementById('duplicateModal').classList.remove('show')">Cancel</button>
+          <button id="mergeDuplicatesBtn" class="btn btn-primary">Remove Selected Duplicates</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Stats Modal -->
+  <div id="statsModal" class="modal" role="dialog" aria-labelledby="statsModalTitle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="statsModalTitle">Statistics</h2>
+        <button class="close-modal" aria-label="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-card-label">Total Items</div>
+            <div class="stat-card-value" id="statsTotal">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Favorites</div>
+            <div class="stat-card-value" id="statsFavorites">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Total Copies</div>
+            <div class="stat-card-value" id="statsCopies">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-card-label">Total Words</div>
+            <div class="stat-card-value" id="statsWords">0</div>
+          </div>
+        </div>
+        <div class="stats-types">
+          <h3>Items by Type</h3>
+          <div id="statsTypes"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <input type="file" id="fileInput" accept=".json,.csv,.txt" style="display: none;" aria-label="Import file">
+  
+  <script src="app-enhanced.js"></script>
 </body>
 </html>
 
