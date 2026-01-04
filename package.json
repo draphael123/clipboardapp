@@ -4,8 +4,7 @@
   "description": "Clipboard Manager Browser Extension",
   "scripts": {
     "package": "node package-extension.js && node generate-update-manifest.js",
-    "deploy": "npm run package && git add -A && git commit -m \"Update extension package\" && git push",
-    "build": "echo 'Static site ready'"
+    "deploy": "npm run package && git add -A && git commit -m \"Update extension package\" && git push"
   },
   "devDependencies": {
     "archiver": "^6.0.2"
