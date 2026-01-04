@@ -1,24 +1,9 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "builds": [
     {
-      "src": "**/*.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "**/*.css",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "**/*.js",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "**/*.zip",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "**/*.xml",
+      "src": "index.html",
       "use": "@vercel/static"
     }
   ],
