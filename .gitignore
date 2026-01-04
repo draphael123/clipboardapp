@@ -34,6 +34,12 @@ build/
 *.pem
 *.zip
 !clipboard-extension.zip
+# Allow update manifest and public directory files for hosting
+!updates.xml
+!public/
+public/*.zip
+!public/clipboard-extension.zip
+!public/updates.xml
 
 # Icons (optional - users can add their own)
 icons/*.png

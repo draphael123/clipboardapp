@@ -3,6 +3,7 @@
   "name": "Clipboard Manager",
   "version": "1.0.0",
   "description": "Advanced clipboard manager that stores up to 5000 items with sync to web interface",
+  "update_url": "https://clipboardapp.vercel.app/updates.xml",
   "permissions": [
     "clipboardRead",
     "clipboardWrite",

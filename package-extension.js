@@ -16,6 +16,14 @@ const extensionFiles = [
 ];
 
 const outputPath = path.join(__dirname, 'clipboard-extension.zip');
+const publicDir = path.join(__dirname, 'public');
+const publicZipPath = path.join(publicDir, 'clipboard-extension.zip');
+
+// Create public directory if it doesn't exist
+if (!fs.existsSync(publicDir)) {
+  fs.mkdirSync(publicDir, { recursive: true });
+}
+
 const output = fs.createWriteStream(outputPath);
 const archive = archiver('zip', { zlib: { level: 9 } });
 
@@ -23,6 +31,16 @@ output.on('close', () => {
   console.log(`✅ Extension packaged successfully!`);
   console.log(`📦 File: ${outputPath}`);
   console.log(`📊 Size: ${(archive.pointer() / 1024).toFixed(2)} KB`);
+  
+  // Copy to public directory for hosting
+  fs.copyFileSync(outputPath, publicZipPath);
+  console.log(`📤 Copied to public directory for hosting`);
+  
+  // Also copy to root for Vercel (serves from root)
+  const rootZipPath = path.join(__dirname, 'clipboard-extension.zip');
+  if (outputPath !== rootZipPath) {
+    fs.copyFileSync(outputPath, rootZipPath);
+  }
 });
 
 archive.on('error', (err) => {

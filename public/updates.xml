@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
+  <app appid='ed92b915-aa23-89da-e244-29fc89d4'>
+    <updatecheck codebase='https://clipboardapp.vercel.app/clipboard-extension.zip' version='1.0.0' />
+  </app>
+</gupdate>
