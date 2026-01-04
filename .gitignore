@@ -41,7 +41,9 @@ public/*.zip
 !public/clipboard-extension.zip
 !public/updates.xml
 
-# Icons (optional - users can add their own)
+# Icons - allow generated icons
+!icons/icon*.png
+!icons/icon.svg
 icons/*.png
 !icons/README.md
 

@@ -3,10 +3,12 @@
   "version": "1.0.0",
   "description": "Clipboard Manager Browser Extension",
   "scripts": {
+    "icons": "node generate-icons.js",
     "package": "node package-extension.js && node generate-update-manifest.js",
     "deploy": "npm run package && git add -A && git commit -m \"Update extension package\" && git push"
   },
   "devDependencies": {
-    "archiver": "^6.0.2"
+    "archiver": "^6.0.2",
+    "sharp": "^0.34.5"
   }
 }
