@@ -35,36 +35,40 @@ function startMonitoring() {
     // This is handled by the message listener below
     
     // Enhanced fallback: More frequent polling to catch all clipboard changes
-    // This helps capture clipboard changes from outside the browser
+    // This helps capture clipboard changes from outside the browser and missed events
     setInterval(async () => {
       try {
-        // Check all tabs for clipboard changes
-        const tabs = await chrome.tabs.query({});
-        
-        // Try to read clipboard from active tabs first
-        for (const tab of tabs.slice(0, 5)) { // Check up to 5 tabs
+        // Check active tab first (most likely to have recent copy)
+        const activeTabs = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (activeTabs[0]) {
           try {
-            chrome.tabs.sendMessage(tab.id, { action: 'checkClipboard' }, (response) => {
-              // Response handled by content script
-            });
+            const text = await getClipboardText(activeTabs[0].id);
+            if (text && text !== lastClipboardText && text.trim().length > 0) {
+              lastClipboardText = text;
+              await addClipboardItem(text);
+            }
           } catch (error) {
-            // Tab might not have content script, skip
+            // Tab might not have content script or clipboard access denied
           }
         }
         
-        // Also try direct clipboard read from active tab
-        const activeTabs = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (activeTabs[0]) {
-          const text = await getClipboardText(activeTabs[0].id);
-          if (text && text !== lastClipboardText && text.trim().length > 0) {
-            lastClipboardText = text;
-            await addClipboardItem(text);
+        // Also check other visible tabs (up to 3) for clipboard changes
+        const visibleTabs = await chrome.tabs.query({ windowId: chrome.windows.WINDOW_ID_CURRENT });
+        for (const tab of visibleTabs.slice(0, 3)) {
+          if (tab.id !== activeTabs[0]?.id) {
+            try {
+              chrome.tabs.sendMessage(tab.id, { action: 'checkClipboard' }, (response) => {
+                // Response handled by content script
+              });
+            } catch (error) {
+              // Tab might not have content script, skip
+            }
           }
         }
       } catch (error) {
         // Silently fail - clipboard access is limited
       }
-    }, 500); // Check every 500ms for more responsive capture
+    }, 300); // Check every 300ms for very responsive capture
   });
 }
 
