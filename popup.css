@@ -342,8 +342,15 @@ header h1 {
 
 .empty-state {
   text-align: center;
-  padding: 60px 20px;
+  padding: 80px 20px;
   color: #999;
+  background: linear-gradient(135deg, rgba(255, 240, 250, 0.6) 0%, rgba(255, 228, 245, 0.6) 100%);
+  border-radius: 30px;
+  margin: 20px;
+  box-shadow: 
+    0 10px 30px rgba(255, 182, 193, 0.15),
+    0 0 0 2px rgba(255, 192, 203, 0.2) inset;
+  border: 3px solid rgba(255, 182, 193, 0.3);
 }
 
 .empty-state-animal {
