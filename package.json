@@ -5,7 +5,7 @@
   "scripts": {
     "package": "node package-extension.js && node generate-update-manifest.js",
     "deploy": "npm run package && git add -A && git commit -m \"Update extension package\" && git push",
-    "build": "echo 'Static site - copying files' && cp -r . ../build || xcopy /E /I /Y . ..\\build\\ || echo 'Files ready'"
+    "build": "echo 'Static site ready'"
   },
   "devDependencies": {
     "archiver": "^6.0.2"
