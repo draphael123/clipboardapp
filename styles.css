@@ -5,7 +5,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', 'Apple Color Emoji', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: linear-gradient(135deg, #ffb3d9 0%, #ffcce5 25%, #e6b3ff 50%, #c299ff 75%, #b3d9ff 100%);
   background-size: 400% 400%;
   animation: kawaiiGradient 15s ease infinite;
@@ -44,9 +44,9 @@ body::before {
   z-index: 0;
 }
 
-/* Kawaii floating sparkles and hearts */
+/* Kawaii floating sparkles and hearts - ENHANCED */
 body::after {
-  content: '✨ 💖 🌸 🎀 💕 ⭐ 💫 🌈 🦄 🍓 💜 💝 🌺 🎁 💗 🎈 🦋 🌻 🍰 🎪 🎨 🎭 🎯 🎲 🎸 🎹';
+  content: '✨ 💖 🌸 🎀 💕 ⭐ 💫 🌈 🦄 🍓 💜 💝 🌺 🎁 💗 🎈 🦋 🌻 🍰 🎪 🎨 🎭 🎯 🎲 🎸 🎹 🐹 🐰 🐱 🐶 🦊 🐼 🐨 🦁 🐯 🦄 🦋 🦉 🐸 🐷 🐮 🐰 🌸 🌺 🌻 🌷 🌹 🌼 🌿 🍀 🍄 🌈 ⭐ 💫 ✨ 💖 💕 💗 💝 💜 💙 💚 💛 🧡 ❤️ 🎀 🎁 🎂 🍰 🍭 🍬 🍫 🍪 🥨 🍩 🍰 🎂';
   position: fixed;
   top: 0;
   left: 0;
@@ -54,15 +54,21 @@ body::after {
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.2;
-  font-size: 36px;
-  animation: float-emojis 15s ease-in-out infinite, pulse-emojis 3s ease-in-out infinite;
+  opacity: 0.25;
+  font-size: 40px;
+  animation: float-emojis 15s ease-in-out infinite, pulse-emojis 3s ease-in-out infinite, emoji-rain 20s linear infinite;
   background: none;
   text-shadow: 
-    0 0 15px rgba(255, 182, 193, 0.6),
-    0 0 30px rgba(255, 192, 203, 0.4),
-    0 0 45px rgba(255, 105, 180, 0.2);
-  filter: blur(0.5px);
+    0 0 20px rgba(255, 182, 193, 0.7),
+    0 0 35px rgba(255, 192, 203, 0.5),
+    0 0 50px rgba(255, 105, 180, 0.3),
+    0 0 70px rgba(255, 182, 193, 0.2);
+  filter: blur(0.3px);
+}
+
+@keyframes emoji-rain {
+  0% { transform: translateY(-100vh) rotate(0deg); }
+  100% { transform: translateY(100vh) rotate(360deg); }
 }
 
 @keyframes float-emojis {
@@ -191,33 +197,49 @@ header::after {
 }
 
 .cute-hamster-mascot {
-  font-size: 80px;
-  animation: kawaiiBounce 2s ease-in-out infinite;
+  font-size: 100px;
+  animation: kawaiiBounce 2s ease-in-out infinite, hamster-wiggle 3s ease-in-out infinite;
   cursor: pointer;
   transition: all 0.3s;
-  filter: drop-shadow(0 8px 16px rgba(255, 182, 193, 0.4)) drop-shadow(0 0 20px rgba(255, 192, 203, 0.6));
+  filter: drop-shadow(0 10px 20px rgba(255, 182, 193, 0.5)) drop-shadow(0 0 30px rgba(255, 192, 203, 0.7)) drop-shadow(0 0 50px rgba(255, 105, 180, 0.4));
   line-height: 1;
   position: relative;
+  text-shadow: 0 0 30px rgba(255, 182, 193, 0.8);
+}
+
+@keyframes hamster-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
 }
 
 .cute-hamster-mascot::before {
-  content: '✨';
+  content: '✨💫⭐';
   position: absolute;
-  top: -20px;
-  left: -20px;
-  font-size: 30px;
-  animation: sparkle 1.5s ease-in-out infinite;
-  opacity: 0.8;
+  top: -30px;
+  left: -30px;
+  font-size: 35px;
+  animation: sparkle 1.5s ease-in-out infinite, float-around 4s ease-in-out infinite;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.8));
 }
 
 .cute-hamster-mascot::after {
-  content: '💖';
+  content: '💖🌸🎀';
   position: absolute;
-  top: -15px;
-  right: -15px;
-  font-size: 25px;
-  animation: sparkle 1.8s ease-in-out infinite 0.3s;
-  opacity: 0.8;
+  top: -25px;
+  right: -25px;
+  font-size: 30px;
+  animation: sparkle 1.8s ease-in-out infinite 0.3s, float-around 4.5s ease-in-out infinite 0.5s;
+  opacity: 0.9;
+  filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.8));
+}
+
+@keyframes float-around {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(10px, -10px) rotate(90deg); }
+  50% { transform: translate(-10px, -20px) rotate(180deg); }
+  75% { transform: translate(-10px, 10px) rotate(270deg); }
 }
 
 .cute-hamster-mascot:hover {
@@ -253,19 +275,26 @@ header::after {
 }
 
 header h1 {
-  font-size: 52px;
+  font-size: 58px;
   font-weight: 900;
-  background: linear-gradient(135deg, #ff69b4 0%, #ff1493 25%, #ff69b4 50%, #ffb6c1 75%, #ff69b4 100%);
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
+  background: linear-gradient(135deg, #ff69b4 0%, #ff1493 20%, #ff69b4 40%, #ffb6c1 60%, #ff69b4 80%, #ff1493 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 10px;
   position: relative;
   z-index: 1;
-  animation: kawaiiGradientText 4s ease infinite;
+  animation: kawaiiGradientText 4s ease infinite, title-bounce 3s ease-in-out infinite;
   background-size: 300% 300%;
-  text-shadow: 0 0 30px rgba(255, 182, 193, 0.3);
-  filter: drop-shadow(0 2px 4px rgba(255, 192, 203, 0.3));
+  text-shadow: 0 0 40px rgba(255, 182, 193, 0.4);
+  filter: drop-shadow(0 4px 8px rgba(255, 192, 203, 0.4)) drop-shadow(0 0 20px rgba(255, 105, 180, 0.3));
+  letter-spacing: 2px;
+}
+
+@keyframes title-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-5px) scale(1.02); }
 }
 
 @keyframes kawaiiGradientText {
@@ -290,10 +319,19 @@ header h1 {
 }
 
 .subtitle {
-  color: #666;
-  font-size: 18px;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
-  font-weight: 500;
+  color: #ff69b4;
+  font-size: 20px;
+  animation: fadeInUp 0.8s ease-out 0.2s both, subtitle-glow 2s ease-in-out infinite;
+  font-weight: 600;
+  text-shadow: 
+    0 0 10px rgba(255, 182, 193, 0.5),
+    0 0 20px rgba(255, 192, 203, 0.3);
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
+}
+
+@keyframes subtitle-glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(255, 182, 193, 0.5), 0 0 20px rgba(255, 192, 203, 0.3); }
+  50% { text-shadow: 0 0 15px rgba(255, 182, 193, 0.7), 0 0 30px rgba(255, 192, 203, 0.5), 0 0 40px rgba(255, 105, 180, 0.3); }
 }
 
 .download-section {
@@ -540,13 +578,20 @@ header h1 {
 }
 
 .benefit-icon {
-  font-size: 64px;
+  font-size: 80px;
   margin-bottom: 20px;
-  filter: drop-shadow(0 6px 12px rgba(255, 182, 193, 0.4)) drop-shadow(0 0 15px rgba(255, 192, 203, 0.5)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.3));
-  animation: kawaiiFloat 3s ease-in-out infinite, icon-glow 2s ease-in-out infinite;
+  filter: drop-shadow(0 8px 16px rgba(255, 182, 193, 0.5)) drop-shadow(0 0 20px rgba(255, 192, 203, 0.6)) drop-shadow(0 0 35px rgba(255, 105, 180, 0.4));
+  animation: kawaiiFloat 3s ease-in-out infinite, icon-glow 2s ease-in-out infinite, icon-spin 4s linear infinite;
   display: inline-block;
   position: relative;
   transition: all 0.3s;
+  text-shadow: 0 0 20px rgba(255, 182, 193, 0.6);
+}
+
+@keyframes icon-spin {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.1); }
+  100% { transform: rotate(360deg) scale(1); }
 }
 
 @keyframes icon-glow {
@@ -580,16 +625,26 @@ header h1 {
 }
 
 .benefit-card h3 {
-  font-size: 20px;
-  font-weight: 700;
-  color: #333;
+  font-size: 22px;
+  font-weight: 800;
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
+  color: #ff69b4;
   margin-bottom: 12px;
+  text-shadow: 0 2px 4px rgba(255, 182, 193, 0.3);
+  animation: title-pulse 2s ease-in-out infinite;
+}
+
+@keyframes title-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
 
 .benefit-card p {
-  font-size: 14px;
+  font-size: 15px;
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
   color: #666;
-  line-height: 1.6;
+  line-height: 1.8;
+  font-weight: 500;
 }
 
 .features-highlight {
@@ -971,14 +1026,21 @@ body.dark-mode .use-case p {
 }
 
 .empty-state h2 {
-  font-size: 24px;
+  font-size: 28px;
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
   margin-bottom: 10px;
-  color: #666;
+  color: #ff69b4;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(255, 182, 193, 0.4);
+  animation: title-pulse 2s ease-in-out infinite;
 }
 
 .empty-state p {
-  font-size: 16px;
+  font-size: 18px;
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
   margin: 5px 0;
+  color: #ff69b4;
+  font-weight: 600;
 }
 
 .hint {
