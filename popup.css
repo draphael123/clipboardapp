@@ -29,7 +29,7 @@ body {
 }
 
 body::before {
-  content: '✨💖🌸🎀💕⭐💫🌈🦄🍓💜💝🌺🎁💗';
+  content: '✨💖🌸🎀💕⭐💫🌈🦄🍓💜💝🌺🎁💗🎈🦋🌻🍰🎪🎨🎭🎯🎲🎸🎹';
   position: fixed;
   top: 0;
   left: 0;
@@ -37,10 +37,25 @@ body::before {
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.1;
-  font-size: 20px;
-  animation: float-emojis 20s ease-in-out infinite;
-  text-shadow: 0 0 10px rgba(255, 182, 193, 0.5);
+  opacity: 0.15;
+  font-size: 22px;
+  animation: float-emojis 15s ease-in-out infinite, pulse-emojis 3s ease-in-out infinite;
+  text-shadow: 
+    0 0 12px rgba(255, 182, 193, 0.6),
+    0 0 25px rgba(255, 192, 203, 0.4),
+    0 0 40px rgba(255, 105, 180, 0.2);
+  filter: blur(0.3px);
+}
+
+@keyframes pulse-emojis {
+  0%, 100% {
+    opacity: 0.12;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.2;
+    transform: scale(1.05);
+  }
 }
 
 .container {
@@ -84,9 +99,15 @@ header::after {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  animation: shine 3s infinite;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shine 3s infinite, rainbow-shine 8s infinite;
   pointer-events: none;
+}
+
+@keyframes rainbow-shine {
+  0% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(180deg); }
+  100% { filter: hue-rotate(360deg); }
 }
 
 @keyframes shine {
@@ -300,11 +321,22 @@ header h1 {
 .btn-small {
   background: linear-gradient(135deg, #ff69b4 0%, #ff1493 50%, #ffb6c1 100%);
   background-size: 200% 200%;
-  animation: kawaiiGradientButton 3s ease infinite;
+  animation: kawaiiGradientButton 3s ease infinite, button-glow-small 2s ease-in-out infinite;
   color: white;
   border: 2px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.4);
+  box-shadow: 
+    0 2px 8px rgba(255, 182, 193, 0.4),
+    0 0 15px rgba(255, 105, 180, 0.2);
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes button-glow-small {
+  0%, 100% { 
+    box-shadow: 0 2px 8px rgba(255, 182, 193, 0.4), 0 0 15px rgba(255, 105, 180, 0.2); 
+  }
+  50% { 
+    box-shadow: 0 3px 10px rgba(255, 182, 193, 0.5), 0 0 20px rgba(255, 105, 180, 0.3); 
+  }
 }
 
 @keyframes kawaiiGradientButton {
@@ -328,9 +360,18 @@ header h1 {
 }
 
 .btn-small:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(255, 182, 193, 0.6);
-  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.15) rotate(2deg);
+  box-shadow: 
+    0 5px 15px rgba(255, 182, 193, 0.7),
+    0 0 25px rgba(255, 105, 180, 0.4),
+    0 0 40px rgba(255, 182, 193, 0.3);
+  border-color: rgba(255, 255, 255, 0.8);
+  animation: button-bounce 0.5s ease;
+}
+
+@keyframes button-bounce {
+  0%, 100% { transform: scale(1.15) rotate(2deg); }
+  50% { transform: scale(1.2) rotate(-2deg); }
 }
 
 .clipboard-list {
@@ -417,7 +458,20 @@ header h1 {
   overflow: hidden;
   box-shadow: 
     0 10px 30px rgba(255, 182, 193, 0.2),
-    0 0 0 2px rgba(255, 192, 203, 0.2) inset;
+    0 0 0 2px rgba(255, 192, 203, 0.2) inset,
+    0 0 20px rgba(255, 182, 193, 0.1);
+  animation: item-entrance 0.4s ease-out backwards;
+}
+
+@keyframes item-entrance {
+  from {
+    opacity: 0;
+    transform: translateX(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
 }
 
 .clipboard-item::before {
@@ -438,11 +492,22 @@ header h1 {
 .clipboard-item:hover {
   border-color: #ff69b4;
   box-shadow: 
-    0 20px 50px rgba(255, 182, 193, 0.4),
-    0 0 0 4px rgba(255, 192, 203, 0.3) inset,
-    0 0 40px rgba(255, 182, 193, 0.3);
-  transform: translateY(-6px) scale(1.03);
+    0 25px 60px rgba(255, 182, 193, 0.5),
+    0 0 0 5px rgba(255, 192, 203, 0.4) inset,
+    0 0 50px rgba(255, 182, 193, 0.4),
+    0 0 80px rgba(255, 105, 180, 0.2);
+  transform: translateY(-8px) scale(1.05) rotate(1deg);
   background: linear-gradient(135deg, rgba(255, 245, 250, 1) 0%, rgba(255, 235, 250, 1) 50%, rgba(245, 245, 255, 1) 100%);
+  animation: item-hover-pulse 1s ease-in-out infinite;
+}
+
+@keyframes item-hover-pulse {
+  0%, 100% { 
+    box-shadow: 0 25px 60px rgba(255, 182, 193, 0.5), 0 0 0 5px rgba(255, 192, 203, 0.4) inset, 0 0 50px rgba(255, 182, 193, 0.4), 0 0 80px rgba(255, 105, 180, 0.2); 
+  }
+  50% { 
+    box-shadow: 0 30px 70px rgba(255, 182, 193, 0.6), 0 0 0 6px rgba(255, 192, 203, 0.5) inset, 0 0 60px rgba(255, 182, 193, 0.5), 0 0 100px rgba(255, 105, 180, 0.3); 
+  }
 }
 
 .clipboard-item.selected {

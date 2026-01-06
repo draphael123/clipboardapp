@@ -46,7 +46,7 @@ body::before {
 
 /* Kawaii floating sparkles and hearts */
 body::after {
-  content: '✨ 💖 🌸 🎀 💕 ⭐ 💫 🌈 🦄 🍓 💜 💝 🌺 🎁 💗';
+  content: '✨ 💖 🌸 🎀 💕 ⭐ 💫 🌈 🦄 🍓 💜 💝 🌺 🎁 💗 🎈 🦋 🌻 🍰 🎪 🎨 🎭 🎯 🎲 🎸 🎹';
   position: fixed;
   top: 0;
   left: 0;
@@ -54,25 +54,40 @@ body::after {
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.15;
-  font-size: 32px;
-  animation: float-emojis 20s ease-in-out infinite;
+  opacity: 0.2;
+  font-size: 36px;
+  animation: float-emojis 15s ease-in-out infinite, pulse-emojis 3s ease-in-out infinite;
   background: none;
-  text-shadow: 0 0 10px rgba(255, 182, 193, 0.5);
+  text-shadow: 
+    0 0 15px rgba(255, 182, 193, 0.6),
+    0 0 30px rgba(255, 192, 203, 0.4),
+    0 0 45px rgba(255, 105, 180, 0.2);
+  filter: blur(0.5px);
 }
 
 @keyframes float-emojis {
   0%, 100% {
-    transform: translateY(0) translateX(0);
+    transform: translateY(0) translateX(0) rotate(0deg);
   }
   25% {
-    transform: translateY(-30px) translateX(20px);
+    transform: translateY(-40px) translateX(30px) rotate(5deg);
   }
   50% {
-    transform: translateY(-50px) translateX(-20px);
+    transform: translateY(-60px) translateX(-30px) rotate(-5deg);
   }
   75% {
-    transform: translateY(-30px) translateX(10px);
+    transform: translateY(-40px) translateX(15px) rotate(3deg);
+  }
+}
+
+@keyframes pulse-emojis {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(1.1);
   }
 }
 
@@ -120,8 +135,31 @@ header::before {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(102, 126, 234, 0.1), transparent);
-  animation: shine 3s infinite;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shine 3s infinite, rainbow-shine 8s infinite;
+}
+
+header::after {
+  content: '✨💖🌸🎀💕⭐💫🌈🦄🍓💜💝🌺🎁💗';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 14px;
+  opacity: 0.4;
+  animation: sparkle-rotate 4s ease-in-out infinite;
+  pointer-events: none;
+  filter: drop-shadow(0 0 8px rgba(255, 182, 193, 0.6));
+}
+
+@keyframes rainbow-shine {
+  0% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(180deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes sparkle-rotate {
+  0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.4; }
+  50% { transform: rotate(180deg) scale(1.2); opacity: 0.7; }
 }
 
 @keyframes slideDown {
@@ -280,10 +318,17 @@ header h1 {
   box-shadow: 
     0 10px 30px rgba(255, 105, 180, 0.5),
     0 0 0 4px rgba(255, 192, 203, 0.4) inset,
-    0 0 30px rgba(255, 182, 193, 0.4);
+    0 0 30px rgba(255, 182, 193, 0.4),
+    0 0 60px rgba(255, 105, 180, 0.2);
   border: 3px solid rgba(255, 255, 255, 0.5);
   position: relative;
   overflow: hidden;
+  animation: button-glow 2s ease-in-out infinite;
+}
+
+@keyframes button-glow {
+  0%, 100% { box-shadow: 0 10px 30px rgba(255, 105, 180, 0.5), 0 0 0 4px rgba(255, 192, 203, 0.4) inset, 0 0 30px rgba(255, 182, 193, 0.4), 0 0 60px rgba(255, 105, 180, 0.2); }
+  50% { box-shadow: 0 12px 35px rgba(255, 105, 180, 0.6), 0 0 0 5px rgba(255, 192, 203, 0.5) inset, 0 0 40px rgba(255, 182, 193, 0.5), 0 0 80px rgba(255, 105, 180, 0.3); }
 }
 
 .btn-download::after {
@@ -321,14 +366,21 @@ header h1 {
 }
 
 .btn-download:hover {
-  transform: translateY(-8px) scale(1.1);
+  transform: translateY(-10px) scale(1.15) rotate(2deg);
   box-shadow: 
-    0 20px 50px rgba(255, 105, 180, 0.6),
-    0 0 0 6px rgba(255, 192, 203, 0.5) inset,
-    0 0 50px rgba(255, 182, 193, 0.6);
+    0 25px 60px rgba(255, 105, 180, 0.7),
+    0 0 0 8px rgba(255, 192, 203, 0.6) inset,
+    0 0 60px rgba(255, 182, 193, 0.7),
+    0 0 100px rgba(255, 105, 180, 0.4);
   background-position: 100% 50%;
-  animation: kawaiiWiggle 0.6s ease;
-  border-color: rgba(255, 255, 255, 0.8);
+  animation: kawaiiWiggle 0.6s ease, button-burst 0.8s ease;
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
+@keyframes button-burst {
+  0% { transform: translateY(-10px) scale(1.15) rotate(2deg); }
+  50% { transform: translateY(-12px) scale(1.18) rotate(-2deg); }
+  100% { transform: translateY(-10px) scale(1.15) rotate(2deg); }
 }
 
 .btn-download:hover::after {
@@ -431,7 +483,14 @@ header h1 {
   overflow: hidden;
   box-shadow: 
     0 10px 30px rgba(255, 182, 193, 0.2),
-    0 0 0 2px rgba(255, 192, 203, 0.2) inset;
+    0 0 0 2px rgba(255, 192, 203, 0.2) inset,
+    0 0 20px rgba(255, 182, 193, 0.1);
+  animation: card-float 6s ease-in-out infinite;
+}
+
+@keyframes card-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
 }
 
 .benefit-card::before {
@@ -450,13 +509,20 @@ header h1 {
 }
 
 .benefit-card:hover {
-  transform: translateY(-12px) scale(1.05);
+  transform: translateY(-15px) scale(1.08) rotate(1deg);
   border-color: #ff69b4;
   box-shadow: 
-    0 20px 50px rgba(255, 182, 193, 0.4),
-    0 0 0 4px rgba(255, 192, 203, 0.3) inset,
-    0 0 40px rgba(255, 182, 193, 0.3);
+    0 25px 60px rgba(255, 182, 193, 0.5),
+    0 0 0 5px rgba(255, 192, 203, 0.4) inset,
+    0 0 50px rgba(255, 182, 193, 0.4),
+    0 0 80px rgba(255, 105, 180, 0.2);
   background: linear-gradient(135deg, rgba(255, 245, 250, 1) 0%, rgba(255, 235, 250, 1) 50%, rgba(245, 245, 255, 1) 100%);
+  animation: card-bounce 0.6s ease;
+}
+
+@keyframes card-bounce {
+  0%, 100% { transform: translateY(-15px) scale(1.08) rotate(1deg); }
+  50% { transform: translateY(-20px) scale(1.1) rotate(-1deg); }
 }
 
 .benefit-card:hover .benefit-icon {
@@ -476,10 +542,16 @@ header h1 {
 .benefit-icon {
   font-size: 64px;
   margin-bottom: 20px;
-  filter: drop-shadow(0 6px 12px rgba(255, 182, 193, 0.4)) drop-shadow(0 0 15px rgba(255, 192, 203, 0.5));
-  animation: kawaiiFloat 3s ease-in-out infinite;
+  filter: drop-shadow(0 6px 12px rgba(255, 182, 193, 0.4)) drop-shadow(0 0 15px rgba(255, 192, 203, 0.5)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.3));
+  animation: kawaiiFloat 3s ease-in-out infinite, icon-glow 2s ease-in-out infinite;
   display: inline-block;
   position: relative;
+  transition: all 0.3s;
+}
+
+@keyframes icon-glow {
+  0%, 100% { filter: drop-shadow(0 6px 12px rgba(255, 182, 193, 0.4)) drop-shadow(0 0 15px rgba(255, 192, 203, 0.5)) drop-shadow(0 0 25px rgba(255, 105, 180, 0.3)); }
+  50% { filter: drop-shadow(0 8px 16px rgba(255, 182, 193, 0.6)) drop-shadow(0 0 20px rgba(255, 192, 203, 0.7)) drop-shadow(0 0 35px rgba(255, 105, 180, 0.5)); }
 }
 
 .benefit-icon::before {
@@ -861,8 +933,32 @@ body.dark-mode .use-case p {
 .empty-icon {
   font-size: 80px;
   margin-bottom: 20px;
-  animation: bounce 2s ease-in-out infinite;
-  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.2));
+  animation: bounce 2s ease-in-out infinite, icon-spin 4s linear infinite;
+  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.2)) drop-shadow(0 0 20px rgba(255, 182, 193, 0.4));
+  position: relative;
+}
+
+.empty-icon::before {
+  content: '✨';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  font-size: 30px;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.empty-icon::after {
+  content: '💖';
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  font-size: 25px;
+  animation: sparkle 2.5s ease-in-out infinite 0.5s;
+}
+
+@keyframes icon-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 @keyframes bounce {
@@ -903,6 +999,18 @@ body.dark-mode .use-case p {
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(10px);
+  animation: card-entrance 0.5s ease-out backwards;
+}
+
+@keyframes card-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .clipboard-card::before {
@@ -923,10 +1031,18 @@ body.dark-mode .use-case p {
 .clipboard-card:hover {
   border-color: #667eea;
   box-shadow: 
-    0 12px 32px rgba(102, 126, 234, 0.2),
-    0 0 0 1px rgba(102, 126, 234, 0.1) inset;
-  transform: translateY(-6px) scale(1.02);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(240, 244, 255, 0.8) 100%);
+    0 15px 40px rgba(102, 126, 234, 0.3),
+    0 0 0 2px rgba(102, 126, 234, 0.2) inset,
+    0 0 30px rgba(102, 126, 234, 0.2),
+    0 0 60px rgba(102, 126, 234, 0.1);
+  transform: translateY(-8px) scale(1.03) rotate(0.5deg);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(240, 244, 255, 0.9) 100%);
+  animation: card-hover-pulse 1s ease-in-out infinite;
+}
+
+@keyframes card-hover-pulse {
+  0%, 100% { box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3), 0 0 0 2px rgba(102, 126, 234, 0.2) inset, 0 0 30px rgba(102, 126, 234, 0.2), 0 0 60px rgba(102, 126, 234, 0.1); }
+  50% { box-shadow: 0 18px 45px rgba(102, 126, 234, 0.4), 0 0 0 3px rgba(102, 126, 234, 0.3) inset, 0 0 40px rgba(102, 126, 234, 0.3), 0 0 80px rgba(102, 126, 234, 0.15); }
 }
 
 .card-preview {

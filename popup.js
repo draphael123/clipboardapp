@@ -31,6 +31,7 @@ const statsModal = document.getElementById('statsModal');
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initVisualEffects();
   loadItems();
   setupEventListeners();
   setupKeyboardShortcuts();
@@ -42,6 +43,103 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+// Initialize visual effects
+function initVisualEffects() {
+  // Add sparkle effect on button clicks
+  document.querySelectorAll('.btn, .btn-primary, .btn-secondary, .btn-small, .btn-icon').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      createSparkleEffect(e.target, e.clientX, e.clientY);
+    });
+  });
+
+  // Add hover ripple effect to items
+  document.addEventListener('mouseover', function(e) {
+    if (e.target.closest('.clipboard-item')) {
+      const item = e.target.closest('.clipboard-item');
+      if (!item.dataset.rippleAdded) {
+        item.addEventListener('mouseenter', function(ev) {
+          createRippleEffect(ev.currentTarget, ev.clientX, ev.clientY);
+        });
+        item.dataset.rippleAdded = 'true';
+      }
+    }
+  });
+}
+
+// Create sparkle effect
+function createSparkleEffect(element, x, y) {
+  const sparkles = ['✨', '💫', '⭐', '💖', '🌸'];
+  for (let i = 0; i < 3; i++) {
+    setTimeout(() => {
+      const sparkle = document.createElement('div');
+      sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+      sparkle.style.position = 'fixed';
+      sparkle.style.left = x + 'px';
+      sparkle.style.top = y + 'px';
+      sparkle.style.fontSize = '16px';
+      sparkle.style.pointerEvents = 'none';
+      sparkle.style.zIndex = '10000';
+      sparkle.style.animation = 'sparkle-fly 0.8s ease-out forwards';
+      document.body.appendChild(sparkle);
+      
+      const angle = (Math.PI * 2 * i) / 3;
+      const distance = 30 + Math.random() * 20;
+      const finalX = x + Math.cos(angle) * distance;
+      const finalY = y + Math.sin(angle) * distance;
+      
+      sparkle.style.setProperty('--final-x', finalX + 'px');
+      sparkle.style.setProperty('--final-y', finalY + 'px');
+      
+      setTimeout(() => sparkle.remove(), 800);
+    }, i * 30);
+  }
+  
+  // Add CSS animation if not already added
+  if (!document.getElementById('sparkle-fly-style')) {
+    const style = document.createElement('style');
+    style.id = 'sparkle-fly-style';
+    style.textContent = `
+      @keyframes sparkle-fly {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(calc(var(--final-x) - var(--start-x, 0)), calc(var(--final-y) - var(--start-y, 0))) scale(0);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
+// Create ripple effect
+function createRippleEffect(element, x, y) {
+  const ripple = document.createElement('div');
+  ripple.style.position = 'absolute';
+  ripple.style.left = (x - element.getBoundingClientRect().left) + 'px';
+  ripple.style.top = (y - element.getBoundingClientRect().top) + 'px';
+  ripple.style.width = '0';
+  ripple.style.height = '0';
+  ripple.style.borderRadius = '50%';
+  ripple.style.background = 'rgba(255, 182, 193, 0.3)';
+  ripple.style.transform = 'translate(-50%, -50%)';
+  ripple.style.pointerEvents = 'none';
+  ripple.style.zIndex = '1';
+  element.style.position = 'relative';
+  element.appendChild(ripple);
+  
+  requestAnimationFrame(() => {
+    ripple.style.transition = 'width 0.5s, height 0.5s, opacity 0.5s';
+    ripple.style.width = '150px';
+    ripple.style.height = '150px';
+    ripple.style.opacity = '0';
+  });
+  
+  setTimeout(() => ripple.remove(), 500);
+}
 
 // Initialize theme
 function initTheme() {
@@ -724,4 +822,5 @@ window.clearSelection = clearSelection;
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(loadSettings, 100);
 });
+
 

@@ -38,6 +38,7 @@ const duplicateBtn = document.getElementById('duplicateBtn');
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initVisualEffects();
   loadFromStorage();
   setupEventListeners();
   setupKeyboardShortcuts();
@@ -63,6 +64,150 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+// Initialize visual effects
+function initVisualEffects() {
+  // Add sparkle effect on button clicks
+  document.querySelectorAll('.btn, .btn-primary, .btn-secondary, .btn-danger, .btn-download').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      createSparkleEffect(e.target, e.clientX, e.clientY);
+    });
+  });
+
+  // Add hover ripple effect to cards
+  document.addEventListener('mouseover', function(e) {
+    if (e.target.closest('.clipboard-card, .benefit-card')) {
+      const card = e.target.closest('.clipboard-card, .benefit-card');
+      if (!card.dataset.rippleAdded) {
+        card.addEventListener('mouseenter', function(ev) {
+          createRippleEffect(ev.currentTarget, ev.clientX, ev.clientY);
+        });
+        card.dataset.rippleAdded = 'true';
+      }
+    }
+  });
+
+  // Add floating particles on scroll
+  let lastScrollTime = 0;
+  window.addEventListener('scroll', function() {
+    const now = Date.now();
+    if (now - lastScrollTime > 100) {
+      createFloatingParticle();
+      lastScrollTime = now;
+    }
+  });
+}
+
+// Create sparkle effect
+function createSparkleEffect(element, x, y) {
+  const sparkles = ['✨', '💫', '⭐', '💖', '🌸'];
+  for (let i = 0; i < 5; i++) {
+    setTimeout(() => {
+      const sparkle = document.createElement('div');
+      sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+      sparkle.style.position = 'fixed';
+      sparkle.style.left = x + 'px';
+      sparkle.style.top = y + 'px';
+      sparkle.style.fontSize = '20px';
+      sparkle.style.pointerEvents = 'none';
+      sparkle.style.zIndex = '10000';
+      sparkle.style.animation = 'sparkle-fly 1s ease-out forwards';
+      document.body.appendChild(sparkle);
+      
+      const angle = (Math.PI * 2 * i) / 5;
+      const distance = 50 + Math.random() * 30;
+      const finalX = x + Math.cos(angle) * distance;
+      const finalY = y + Math.sin(angle) * distance;
+      
+      sparkle.style.setProperty('--final-x', finalX + 'px');
+      sparkle.style.setProperty('--final-y', finalY + 'px');
+      
+      setTimeout(() => sparkle.remove(), 1000);
+    }, i * 50);
+  }
+  
+  // Add CSS animation if not already added
+  if (!document.getElementById('sparkle-fly-style')) {
+    const style = document.createElement('style');
+    style.id = 'sparkle-fly-style';
+    style.textContent = `
+      @keyframes sparkle-fly {
+        0% {
+          transform: translate(0, 0) scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(calc(var(--final-x) - var(--start-x, 0)), calc(var(--final-y) - var(--start-y, 0))) scale(0);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
+// Create ripple effect
+function createRippleEffect(element, x, y) {
+  const ripple = document.createElement('div');
+  ripple.style.position = 'absolute';
+  ripple.style.left = (x - element.getBoundingClientRect().left) + 'px';
+  ripple.style.top = (y - element.getBoundingClientRect().top) + 'px';
+  ripple.style.width = '0';
+  ripple.style.height = '0';
+  ripple.style.borderRadius = '50%';
+  ripple.style.background = 'rgba(255, 182, 193, 0.3)';
+  ripple.style.transform = 'translate(-50%, -50%)';
+  ripple.style.pointerEvents = 'none';
+  ripple.style.zIndex = '1';
+  element.style.position = 'relative';
+  element.appendChild(ripple);
+  
+  requestAnimationFrame(() => {
+    ripple.style.transition = 'width 0.6s, height 0.6s, opacity 0.6s';
+    ripple.style.width = '200px';
+    ripple.style.height = '200px';
+    ripple.style.opacity = '0';
+  });
+  
+  setTimeout(() => ripple.remove(), 600);
+}
+
+// Create floating particle
+function createFloatingParticle() {
+  const particles = ['✨', '💖', '⭐', '🌸', '💫'];
+  const particle = document.createElement('div');
+  particle.textContent = particles[Math.floor(Math.random() * particles.length)];
+  particle.style.position = 'fixed';
+  particle.style.left = Math.random() * window.innerWidth + 'px';
+  particle.style.top = window.innerHeight + 'px';
+  particle.style.fontSize = (12 + Math.random() * 8) + 'px';
+  particle.style.pointerEvents = 'none';
+  particle.style.zIndex = '0';
+  particle.style.opacity = '0.6';
+  particle.style.animation = 'float-up 3s ease-out forwards';
+  document.body.appendChild(particle);
+  
+  setTimeout(() => particle.remove(), 3000);
+  
+  // Add CSS animation if not already added
+  if (!document.getElementById('float-up-style')) {
+    const style = document.createElement('style');
+    style.id = 'float-up-style';
+    style.textContent = `
+      @keyframes float-up {
+        0% {
+          transform: translateY(0) translateX(0) rotate(0deg);
+          opacity: 0.6;
+        }
+        100% {
+          transform: translateY(-100vh) translateX(${Math.random() * 100 - 50}px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
 
 // Enhance item with additional properties
 function enhanceItem(item) {
@@ -1059,4 +1204,5 @@ function showToast(message, type = 'info') {
 // Make functions globally available
 window.toggleSelection = toggleSelection;
 window.removeTag = removeTag;
+
 
