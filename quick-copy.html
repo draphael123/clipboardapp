@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quick Copy</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
+      width: 500px;
+      max-height: 600px;
+      background: linear-gradient(135deg, #ffb3d9 0%, #ffcce5 25%, #e6b3ff 50%, #c299ff 75%, #b3d9ff 100%);
+      background-size: 400% 400%;
+      animation: kawaiiGradient 15s ease infinite;
+      color: #333;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    @keyframes kawaiiGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .container {
+      background: linear-gradient(135deg, rgba(255, 240, 250, 0.98) 0%, rgba(255, 228, 245, 0.98) 100%);
+      backdrop-filter: blur(15px);
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+      border: 4px solid rgba(255, 192, 203, 0.4);
+      box-shadow: 0 20px 60px rgba(255, 182, 193, 0.3);
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #ff69b4 0%, #ff1493 50%, #ffb6c1 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 800;
+      border-bottom: 4px solid rgba(255, 192, 203, 0.4);
+    }
+    
+    .search-box {
+      padding: 16px;
+      background: rgba(255, 240, 250, 0.95);
+      border-bottom: 3px solid rgba(255, 182, 193, 0.3);
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 3px solid rgba(255, 182, 193, 0.4);
+      border-radius: 25px;
+      font-size: 16px;
+      font-family: 'Comic Sans MS', sans-serif;
+      outline: none;
+      background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .search-box input:focus {
+      border-color: #ff69b4;
+      box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
+    }
+    
+    .items-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+    }
+    
+    .quick-item {
+      background: linear-gradient(135deg, rgba(255, 240, 250, 0.95) 0%, rgba(255, 228, 245, 0.95) 100%);
+      border: 3px solid rgba(255, 182, 193, 0.4);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: 'Comic Sans MS', sans-serif;
+    }
+    
+    .quick-item:hover, .quick-item.focused {
+      transform: translateY(-4px) scale(1.02);
+      border-color: #ff69b4;
+      box-shadow: 0 10px 30px rgba(255, 182, 193, 0.4);
+    }
+    
+    .quick-item-preview {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+    
+    .quick-item-meta {
+      font-size: 11px;
+      color: #999;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #ff69b4;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      🐹 Quick Copy Menu ✨
+    </div>
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="🔍 Type to search... (Enter to copy)" autofocus>
+    </div>
+    <div class="items-list" id="itemsList">
+      <div class="empty-state">Loading...</div>
+    </div>
+  </div>
+  <script src="quick-copy.js"></script>
+</body>
+</html>
+

@@ -14,7 +14,54 @@ chrome.runtime.onInstalled.addListener(() => {
     }
   });
   startMonitoring();
+  setupContextMenu();
+  updateBadge();
 });
+
+// Setup context menu
+function setupContextMenu() {
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({
+      id: 'save-to-clipboard-manager',
+      title: 'Save to Clipboard Manager',
+      contexts: ['selection']
+    });
+    
+    chrome.contextMenus.create({
+      id: 'search-clipboard-manager',
+      title: 'Search in Clipboard Manager',
+      contexts: ['page']
+    });
+  });
+}
+
+// Handle context menu clicks
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId === 'save-to-clipboard-manager') {
+    const text = info.selectionText;
+    if (text && text.trim().length > 0) {
+      addClipboardItem(text.trim());
+    }
+  } else if (info.menuItemId === 'search-clipboard-manager') {
+    chrome.tabs.create({
+      url: `https://clipboardapp.vercel.app/?search=${encodeURIComponent('')}`
+    });
+  }
+});
+
+// Update badge with item count
+function updateBadge() {
+  chrome.storage.local.get([STORAGE_KEY], (result) => {
+    const items = result[STORAGE_KEY] || [];
+    const count = items.length;
+    if (count > 0) {
+      chrome.action.setBadgeText({ text: count > 99 ? '99+' : count.toString() });
+      chrome.action.setBadgeBackgroundColor({ color: '#ff69b4' });
+    } else {
+      chrome.action.setBadgeText({ text: '' });
+    }
+  });
+}
 
 // Start clipboard monitoring - Enhanced for automatic capture
 function startMonitoring() {
@@ -162,14 +209,16 @@ async function addClipboardItem(text) {
         items = items.slice(0, MAX_ITEMS);
       }
       
-      chrome.storage.local.set({ [STORAGE_KEY]: items }, () => {
-        // Notify popup if open
-        chrome.runtime.sendMessage({ 
-          action: 'clipboardUpdated', 
-          item: newItem 
-        }).catch(() => {});
-        resolve();
-      });
+              chrome.storage.local.set({ [STORAGE_KEY]: items }, () => {
+                // Notify popup if open
+                chrome.runtime.sendMessage({
+                  action: 'clipboardUpdated',
+                  item: newItem
+                }).catch(() => {});
+                // Update badge
+                updateBadge();
+                resolve();
+              });
     });
   });
 }
@@ -194,6 +243,16 @@ function detectItemType(text) {
 function countWords(text) {
   return text.trim().split(/\s+/).filter(word => word.length > 0).length;
 }
+
+// Handle commands (keyboard shortcuts)
+chrome.commands.onCommand.addListener((command) => {
+  if (command === 'quick-copy') {
+    chrome.tabs.create({
+      url: chrome.runtime.getURL('quick-copy.html'),
+      active: true
+    });
+  }
+});
 
 // Handle messages from popup and content scripts
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -223,6 +282,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       let items = result[STORAGE_KEY] || [];
       items = items.filter(item => item.id !== request.id);
       chrome.storage.local.set({ [STORAGE_KEY]: items }, () => {
+        updateBadge();
         sendResponse({ success: true });
       });
     });
@@ -231,6 +291,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   
   if (request.action === 'clearAll') {
     chrome.storage.local.set({ [STORAGE_KEY]: [] }, () => {
+      updateBadge();
       sendResponse({ success: true });
     });
     return true;

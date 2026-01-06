@@ -243,6 +243,9 @@ function toggleDarkMode() {
   showToast(`Switched to ${isDarkMode ? 'dark' : 'light'} mode`, 'info');
 }
 
+// Keyboard navigation state
+let focusedCardIndex = -1;
+
 // Setup keyboard shortcuts
 function setupKeyboardShortcuts() {
   document.addEventListener('keydown', (e) => {
@@ -250,6 +253,48 @@ function setupKeyboardShortcuts() {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
       e.preventDefault();
       searchInput?.focus();
+      focusedCardIndex = -1;
+      return;
+    }
+    
+    // Arrow keys: Navigate cards
+    if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && !e.target.matches('input, textarea')) {
+      e.preventDefault();
+      navigateCards(e.key === 'ArrowDown' ? 1 : -1);
+      return;
+    }
+    
+    // Enter: Copy focused card
+    if (e.key === 'Enter' && focusedCardIndex >= 0 && !e.target.matches('input, textarea')) {
+      e.preventDefault();
+      const cards = Array.from(clipboardGrid.querySelectorAll('.clipboard-card'));
+      if (cards[focusedCardIndex]) {
+        const id = cards[focusedCardIndex].dataset.id;
+        copyItem(id);
+      }
+      return;
+    }
+    
+    // Delete: Delete focused/selected cards
+    if (e.key === 'Delete' && !e.target.matches('input, textarea')) {
+      e.preventDefault();
+      if (selectedItems.size > 0) {
+        bulkDelete();
+      } else if (focusedCardIndex >= 0) {
+        const cards = Array.from(clipboardGrid.querySelectorAll('.clipboard-card'));
+        if (cards[focusedCardIndex]) {
+          const id = cards[focusedCardIndex].dataset.id;
+          deleteItem(id);
+        }
+      }
+      return;
+    }
+    
+    // Escape: Clear selection and focus
+    if (e.key === 'Escape') {
+      focusedCardIndex = -1;
+      clearSelection();
+      searchInput?.blur();
       return;
     }
     
@@ -476,7 +521,7 @@ function renderItems() {
           <input type="checkbox" class="card-checkbox" ${isSelected ? 'checked' : ''} 
                  data-id="${item.id}" onchange="toggleSelection('${item.id}')">
         </div>
-        <div class="card-preview">${escapeHtml(item.preview)}${item.text.length > 100 ? '...' : ''}</div>
+        <div class="card-preview" data-full-text="${escapeHtml(item.text)}" title="${escapeHtml(item.text)}">${searchQuery ? highlightSearchMatch(item.preview, searchQuery) : escapeHtml(item.preview)}${item.text.length > 100 ? '...' : ''}</div>
         ${item.tags.length > 0 ? `<div class="card-tags">${item.tags.map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
         <div class="card-meta">
           <div class="card-info">
@@ -496,7 +541,72 @@ function renderItems() {
   // Add event listeners
   setupCardEventListeners();
   setupDragAndDrop();
+  setupCardTooltips();
   updateBulkActionsBar();
+  focusedCardIndex = -1; // Reset focus on render
+}
+
+// Navigate cards with keyboard
+function navigateCards(direction) {
+  const cards = Array.from(clipboardGrid.querySelectorAll('.clipboard-card'));
+  if (cards.length === 0) return;
+  
+  focusedCardIndex += direction;
+  if (focusedCardIndex < 0) focusedCardIndex = cards.length - 1;
+  if (focusedCardIndex >= cards.length) focusedCardIndex = 0;
+  
+  cards.forEach((card, index) => {
+    card.classList.toggle('focused', index === focusedCardIndex);
+  });
+  
+  if (cards[focusedCardIndex]) {
+    cards[focusedCardIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+}
+
+// Setup card tooltips for enhanced preview
+function setupCardTooltips() {
+  clipboardGrid.querySelectorAll('.card-preview').forEach(preview => {
+    const fullText = preview.dataset.fullText;
+    if (fullText && fullText.length > 100) {
+      preview.addEventListener('mouseenter', function(e) {
+        showTooltip(e.target, fullText);
+      });
+      preview.addEventListener('mouseleave', function() {
+        hideTooltip();
+      });
+    }
+  });
+}
+
+let tooltipElement = null;
+
+function showTooltip(element, text) {
+  hideTooltip();
+  tooltipElement = document.createElement('div');
+  tooltipElement.className = 'card-tooltip';
+  tooltipElement.textContent = text;
+  document.body.appendChild(tooltipElement);
+  
+  const rect = element.getBoundingClientRect();
+  tooltipElement.style.left = rect.left + 'px';
+  tooltipElement.style.top = (rect.top - tooltipElement.offsetHeight - 10) + 'px';
+  
+  // Adjust if tooltip goes off screen
+  if (tooltipElement.offsetLeft + tooltipElement.offsetWidth > window.innerWidth) {
+    tooltipElement.style.left = (window.innerWidth - tooltipElement.offsetWidth - 10) + 'px';
+  }
+  if (tooltipElement.offsetTop < 0) {
+    tooltipElement.style.top = (rect.bottom + 10) + 'px';
+  }
+}
+
+function hideTooltip() {
+  if (tooltipElement) {
+    tooltipElement.remove();
+    tooltipElement = null;
+  }
+}
 }
 
 // Setup card event listeners
@@ -767,21 +877,37 @@ function removeTag(id, tag) {
   showToast('Tag removed', 'info');
 }
 
-// Handle search
+// Handle search with highlighting
+let searchQuery = '';
+
 function handleSearch(e) {
-  const query = e.target.value.toLowerCase().trim();
+  searchQuery = e.target.value.toLowerCase().trim();
   
-  if (query === '') {
+  if (searchQuery === '') {
     filteredItems = clipboardItems;
   } else {
     filteredItems = clipboardItems.filter(item => 
-      item.text.toLowerCase().includes(query) ||
-      item.tags?.some(tag => tag.toLowerCase().includes(query))
+      item.text.toLowerCase().includes(searchQuery) ||
+      item.tags?.some(tag => tag.toLowerCase().includes(searchQuery)) ||
+      item.type?.toLowerCase().includes(searchQuery) ||
+      item.preview?.toLowerCase().includes(searchQuery)
     );
   }
   
   applySortAndFilter();
   renderItems();
+}
+
+// Highlight search matches in text
+function highlightSearchMatch(text, query) {
+  if (!query || !text) return escapeHtml(text);
+  const escapedText = escapeHtml(text);
+  const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+  return escapedText.replace(regex, '<mark class="search-highlight">$1</mark>');
+}
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // Handle sort change

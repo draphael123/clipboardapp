@@ -14,7 +14,8 @@
     "clipboardWrite",
     "storage",
     "activeTab",
-    "tabs"
+    "tabs",
+    "contextMenus"
   ],
   "host_permissions": [
     "http://localhost/*",
@@ -30,12 +31,27 @@
       "run_at": "document_idle"
     }
   ],
+  "web_accessible_resources": [
+    {
+      "resources": ["quick-copy.html", "quick-copy.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
+    }
+  },
+  "commands": {
+    "quick-copy": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+V",
+        "mac": "Command+Shift+V"
+      },
+      "description": "Open quick copy menu"
     }
   },
   "content_security_policy": {

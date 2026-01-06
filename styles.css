@@ -1869,6 +1869,68 @@ body.dark-mode .toolbar-actions select {
   outline-offset: 2px;
 }
 
+/* Search highlighting */
+.search-highlight {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  color: #333;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+  animation: highlight-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes highlight-pulse {
+  0%, 100% { background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); }
+  50% { background: linear-gradient(135deg, #ffed4e 0%, #fff9c4 100%); }
+}
+
+/* Focused card */
+.clipboard-card.focused {
+  border-color: #ff69b4 !important;
+  box-shadow: 
+    0 0 0 4px rgba(255, 105, 180, 0.3),
+    0 15px 40px rgba(255, 182, 193, 0.4),
+    0 0 60px rgba(255, 105, 180, 0.2) !important;
+  transform: translateY(-8px) scale(1.05) !important;
+  z-index: 10;
+  position: relative;
+}
+
+/* Card tooltip */
+.card-tooltip {
+  position: fixed;
+  background: linear-gradient(135deg, rgba(255, 240, 250, 0.98) 0%, rgba(255, 228, 245, 0.98) 100%);
+  backdrop-filter: blur(15px);
+  border: 3px solid rgba(255, 182, 193, 0.5);
+  border-radius: 16px;
+  padding: 16px;
+  max-width: 400px;
+  max-height: 300px;
+  overflow-y: auto;
+  box-shadow: 
+    0 20px 60px rgba(255, 182, 193, 0.4),
+    0 0 0 2px rgba(255, 192, 203, 0.3) inset;
+  z-index: 10000;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  word-wrap: break-word;
+  animation: tooltip-fade-in 0.2s ease-out;
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
+}
+
+@keyframes tooltip-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 /* Print Styles */
 @media print {
   .toolbar,
