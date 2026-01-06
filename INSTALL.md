@@ -67,3 +67,4 @@ Just navigate to `[browser]://extensions/` and follow the same steps.
 - Check the [README.md](README.md) for more information
 - Open an issue on GitHub: https://github.com/draphael123/clipboardapp/issues
 
+

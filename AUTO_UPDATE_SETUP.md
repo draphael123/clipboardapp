@@ -99,3 +99,4 @@ If you're still using "Load unpacked", you won't get auto-updates. You need to:
 - **No Data Loss**: Updates preserve all your clipboard data and settings
 - **Rollback**: If needed, you can install an older version by downloading a previous release
 
+
