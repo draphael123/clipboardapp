@@ -361,7 +361,7 @@ function renderItems() {
             ${item.isFavorite ? '⭐' : '☆'}
           </button>
         </div>
-        <div class="item-preview">${escapeHtml(item.preview)}${item.text.length > 100 ? '...' : ''}</div>
+        <div class="item-preview">${searchQuery ? highlightSearchMatch(item.preview, searchQuery) : escapeHtml(item.preview)}${item.text.length > 100 ? '...' : ''}</div>
         ${item.tags && item.tags.length > 0 ? `<div class="item-tags-mini">${item.tags.slice(0, 2).map(tag => `<span class="tag-mini">${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
         <div class="item-meta">
           <div class="item-info">
@@ -592,7 +592,7 @@ function removeTag(id, tag) {
   });
 }
 
-// Handle search
+// Handle search with highlighting
 let searchQuery = '';
 
 function handleSearch(e) {
@@ -600,6 +600,18 @@ function handleSearch(e) {
   applySortAndFilter();
   renderItems();
   updateItemCount();
+}
+
+// Highlight search matches
+function highlightSearchMatch(text, query) {
+  if (!query || !text) return escapeHtml(text);
+  const escapedText = escapeHtml(text);
+  const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+  return escapedText.replace(regex, '<mark class="search-highlight">$1</mark>');
+}
+
+function escapeRegex(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 // Handle search input changes (for UI updates)

@@ -479,26 +479,48 @@ function getTypeIcon(type) {
 // Render items with virtual scrolling
 function renderItems() {
   if (isLoading) {
-    clipboardGrid.innerHTML = Array(6).fill(0).map(() => `
-      <div class="clipboard-card skeleton">
+    clipboardGrid.innerHTML = Array(8).fill(0).map((_, i) => `
+      <div class="clipboard-card skeleton" style="animation-delay: ${i * 0.1}s">
+        <div class="skeleton-header">
+          <div class="skeleton-icon"></div>
+          <div class="skeleton-checkbox"></div>
+        </div>
+        <div class="skeleton-line"></div>
         <div class="skeleton-line"></div>
         <div class="skeleton-line short"></div>
+        <div class="skeleton-meta">
+          <div class="skeleton-line tiny"></div>
+          <div class="skeleton-line tiny"></div>
+        </div>
       </div>
     `).join('');
     return;
   }
   
   if (filteredItems.length === 0) {
+    const isSearching = searchQuery.length > 0;
     clipboardGrid.innerHTML = `
       <div class="empty-state">
-        <div class="empty-icon">📋</div>
-        <h2>No Clipboard Items</h2>
-        <p>Your clipboard history will appear here</p>
-        <p class="hint">Sync from extension, import data, or start copying to get started</p>
+        <div class="empty-icon">${isSearching ? '🔍' : '🐹'}</div>
+        <h2>${isSearching ? 'No Results Found' : 'No Clipboard Items Yet!'}</h2>
+        <p>${isSearching ? `No items match "${searchQuery}"` : 'Your clipboard history will appear here'}</p>
+        <p class="hint">${isSearching ? 'Try a different search term or clear the search' : '✨ Sync from extension, import data, or start copying to get started! 💖'}</p>
+        ${!isSearching ? `
         <div class="empty-actions">
           <button class="btn btn-primary" onclick="document.getElementById('importBtn').click()">📥 Import Data</button>
           <button class="btn btn-secondary" onclick="document.getElementById('syncBtn').click()">🔄 Sync Extension</button>
         </div>
+        <div class="empty-tips">
+          <h3>💡 Quick Tips:</h3>
+          <ul>
+            <li>📋 Copy text anywhere and it will be saved automatically!</li>
+            <li>🔍 Use Ctrl+K to search your clipboard history</li>
+            <li>⭐ Mark important items as favorites</li>
+            <li>🏷️ Add tags to organize your clips</li>
+            <li>⌨️ Use arrow keys to navigate, Enter to copy</li>
+          </ul>
+        </div>
+        ` : ''}
       </div>
     `;
     return;

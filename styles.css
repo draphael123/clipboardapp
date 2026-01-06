@@ -1642,23 +1642,104 @@ body.dark-mode .modal-body textarea {
   gap: 12px;
   justify-content: center;
   margin-top: 20px;
+  margin-bottom: 30px;
 }
 
-/* Skeleton Loaders */
+.empty-tips {
+  margin-top: 30px;
+  padding: 24px;
+  background: linear-gradient(135deg, rgba(255, 240, 250, 0.6) 0%, rgba(255, 228, 245, 0.6) 100%);
+  border-radius: 20px;
+  border: 3px solid rgba(255, 182, 193, 0.3);
+  text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.empty-tips h3 {
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
+  color: #ff69b4;
+  font-size: 20px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.empty-tips ul {
+  list-style: none;
+  padding: 0;
+}
+
+.empty-tips li {
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
+  padding: 10px 0;
+  font-size: 15px;
+  color: #666;
+  line-height: 1.6;
+  border-bottom: 1px solid rgba(255, 182, 193, 0.2);
+}
+
+.empty-tips li:last-child {
+  border-bottom: none;
+}
+
+/* Skeleton Loaders - Enhanced */
 .skeleton {
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  background: linear-gradient(135deg, rgba(255, 240, 250, 0.95) 0%, rgba(255, 228, 245, 0.95) 100%);
+  border: 3px solid rgba(255, 182, 193, 0.3);
+  border-radius: 20px;
+  padding: 16px;
+}
+
+.skeleton-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.skeleton-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, rgba(255, 182, 193, 0.3) 25%, rgba(255, 192, 203, 0.2) 50%, rgba(255, 182, 193, 0.3) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+.skeleton-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(255, 182, 193, 0.3) 25%, rgba(255, 192, 203, 0.2) 50%, rgba(255, 182, 193, 0.3) 75%);
+  background-size: 200% 100%;
   animation: skeleton-loading 1.5s ease-in-out infinite;
 }
 
 .skeleton-line {
-  height: 16px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  height: 14px;
+  background: linear-gradient(90deg, rgba(255, 182, 193, 0.3) 25%, rgba(255, 192, 203, 0.2) 50%, rgba(255, 182, 193, 0.3) 75%);
   background-size: 200% 100%;
-  border-radius: 4px;
-  margin-bottom: 8px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
 }
 
 .skeleton-line.short {
   width: 60%;
+}
+
+.skeleton-line.tiny {
+  height: 10px;
+  width: 80px;
+  margin-bottom: 0;
+}
+
+.skeleton-meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
 }
 
 @keyframes skeleton-loading {
