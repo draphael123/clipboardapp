@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Check for data in URL (from extension sync)
   const urlParams = new URLSearchParams(window.location.search);
   const dataParam = urlParams.get('data');
+  const syncParam = urlParams.get('sync');
   
   if (dataParam) {
     try {
@@ -56,13 +57,69 @@ document.addEventListener('DOMContentLoaded', () => {
       filteredItems = clipboardItems;
       applySortAndFilter();
       updateStats();
+      saveToStorage();
       renderItems();
-      showToast('Data synced from extension!', 'success');
+      showToast(`✨ Successfully synced ${data.length} items from extension! 💖`, 'success');
       window.history.replaceState({}, document.title, window.location.pathname);
     } catch (error) {
       console.error('Error parsing sync data:', error);
-      showToast('Error syncing data', 'error');
+      showToast('❌ Error syncing data: ' + error.message, 'error');
     }
+  } else if (syncParam === 'true') {
+    // Wait for sync data from extension
+    showToast('🔄 Waiting for sync data...', 'info');
+    
+    // Listen for sync data message
+    window.addEventListener('message', (event) => {
+      if (event.data && event.data.type === 'CLIPBOARD_MANAGER_SYNC_DATA') {
+        try {
+          const data = event.data.data;
+          clipboardItems = data.map(item => enhanceItem(item));
+          filteredItems = clipboardItems;
+          applySortAndFilter();
+          updateStats();
+          saveToStorage();
+          renderItems();
+          showToast(`✨ Successfully synced ${data.length} items from extension! 💖`, 'success');
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } catch (error) {
+          console.error('Error processing sync data:', error);
+          showToast('❌ Error processing sync data: ' + error.message, 'error');
+        }
+      }
+    });
+    
+    // Also check chrome.storage for sync data (for large datasets)
+    setTimeout(() => {
+      if (typeof chrome !== 'undefined' && chrome.storage) {
+        chrome.storage.local.get(['syncData', 'syncTimestamp'], (result) => {
+          if (result.syncData && result.syncTimestamp) {
+            // Only use if timestamp is recent (within last 30 seconds)
+            const age = Date.now() - result.syncTimestamp;
+            if (age < 30000) {
+              try {
+                const data = result.syncData;
+                clipboardItems = data.map(item => enhanceItem(item));
+                filteredItems = clipboardItems;
+                applySortAndFilter();
+                updateStats();
+                saveToStorage();
+                renderItems();
+                showToast(`✨ Successfully synced ${data.length} items from extension! 💖`, 'success');
+                chrome.storage.local.remove(['syncData', 'syncTimestamp']);
+                window.history.replaceState({}, document.title, window.location.pathname);
+              } catch (error) {
+                console.error('Error processing sync data:', error);
+                showToast('❌ Error processing sync data: ' + error.message, 'error');
+              }
+            } else {
+              // Timestamp too old, clear it
+              chrome.storage.local.remove(['syncData', 'syncTimestamp']);
+            }
+          }
+        });
+      }
+    }, 1000);
   }
 });
 

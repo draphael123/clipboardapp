@@ -801,12 +801,48 @@ function handleClearAll() {
 
 // Handle sync
 function handleSync() {
+  showToast('🔄 Syncing to website...', 'info');
+  
   chrome.runtime.sendMessage({ action: 'exportData' }, (response) => {
+    if (chrome.runtime.lastError) {
+      console.error('Sync error:', chrome.runtime.lastError);
+      showToast('❌ Error syncing: ' + chrome.runtime.lastError.message, 'error');
+      return;
+    }
+    
     if (response && response.data) {
-      const data = encodeURIComponent(JSON.stringify(response.data));
-      chrome.tabs.create({ 
-        url: `https://clipboardapp.vercel.app/?data=${data}` 
-      });
+      try {
+        const data = response.data;
+        const dataString = JSON.stringify(data);
+        const itemCount = data.length;
+        
+        // Check if data is too large for URL (Chrome has ~2MB URL limit, but we'll use 1.5MB to be safe)
+        if (dataString.length > 1500000) {
+          // Data too large - use alternative method
+          showToast('📦 Data too large, using alternative sync method...', 'info');
+          
+          // Store in chrome.storage and open website
+          chrome.storage.local.set({ syncData: data, syncTimestamp: Date.now() }, () => {
+            chrome.tabs.create({ 
+              url: `https://clipboardapp.vercel.app/?sync=true` 
+            }, (tab) => {
+              showToast(`✨ Opening website with ${itemCount} items! 💖`, 'success');
+            });
+          });
+        } else {
+          // Normal sync via URL
+          const encodedData = encodeURIComponent(dataString);
+          chrome.tabs.create({ 
+            url: `https://clipboardapp.vercel.app/?data=${encodedData}` 
+          });
+          showToast(`✨ Synced ${itemCount} items to website! 💖`, 'success');
+        }
+      } catch (error) {
+        console.error('Sync error:', error);
+        showToast('❌ Error preparing sync data: ' + error.message, 'error');
+      }
+    } else {
+      showToast('💡 No data to sync - clipboard is empty', 'info');
     }
   });
 }

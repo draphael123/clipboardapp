@@ -222,5 +222,23 @@ window.addEventListener('message', (event) => {
       }
     });
   }
+  
+  // Handle sync data message from extension popup
+  if (event.data && event.data.type === 'CLIPBOARD_MANAGER_SYNC_DATA') {
+    // Forward to page
+    window.postMessage(event.data, '*');
+  }
+});
+
+// Listen for messages from background script to forward sync data
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'syncDataToPage' && request.data) {
+    window.postMessage({
+      type: 'CLIPBOARD_MANAGER_SYNC_DATA',
+      data: request.data
+    }, '*');
+    sendResponse({ success: true });
+  }
+  return true;
 });
 
