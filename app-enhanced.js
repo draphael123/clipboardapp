@@ -1054,7 +1054,139 @@ function handleClearAll() {
 
 // Handle sync
 function handleSync() {
-  showToast('To sync from extension, use the sync button in the extension popup!', 'info');
+  // Check if we're in a browser extension context
+  if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+    // We're in the extension context, get data directly
+    chrome.runtime.sendMessage({ action: 'exportData' }, (response) => {
+      if (chrome.runtime.lastError) {
+        showToast('Error connecting to extension: ' + chrome.runtime.lastError.message, 'error');
+        return;
+      }
+      if (response && response.data) {
+        clipboardItems = response.data.map(item => enhanceItem(item));
+        filteredItems = clipboardItems;
+        applySortAndFilter();
+        updateStats();
+        renderItems();
+        saveToStorage();
+        showToast(`Synced ${clipboardItems.length} items from extension!`, 'success');
+      } else {
+        showToast('No data found in extension', 'info');
+      }
+    });
+  } else {
+    // We're on the website - try to detect and communicate with extension
+    detectAndSyncFromExtension();
+  }
+}
+
+// Detect extension and attempt to sync
+function detectAndSyncFromExtension() {
+  // Try to detect if extension is installed by checking for a known element or message
+  // Since we can't directly access extension storage from a web page,
+  // we'll show instructions and also try to use postMessage if extension injects a script
+  
+  // Check if extension has injected a bridge script
+  if (window.clipboardManagerExtension) {
+    // Extension bridge is available
+    window.clipboardManagerExtension.getData((data) => {
+      if (data && data.length > 0) {
+        clipboardItems = data.map(item => enhanceItem(item));
+        filteredItems = clipboardItems;
+        applySortAndFilter();
+        updateStats();
+        renderItems();
+        saveToStorage();
+        showToast(`Synced ${clipboardItems.length} items from extension!`, 'success');
+      } else {
+        showSyncInstructions();
+      }
+    });
+  } else {
+    // Try to request data via postMessage (if extension listens for it)
+    window.postMessage({ 
+      type: 'CLIPBOARD_MANAGER_SYNC_REQUEST',
+      source: 'clipboard-manager-web'
+    }, '*');
+    
+    // Listen for response
+    const messageListener = (event) => {
+      if (event.data && event.data.type === 'CLIPBOARD_MANAGER_SYNC_RESPONSE' && event.data.source === 'clipboard-manager-extension') {
+        window.removeEventListener('message', messageListener);
+        if (event.data.data && event.data.data.length > 0) {
+          clipboardItems = event.data.data.map(item => enhanceItem(item));
+          filteredItems = clipboardItems;
+          applySortAndFilter();
+          updateStats();
+          renderItems();
+          saveToStorage();
+          showToast(`Synced ${clipboardItems.length} items from extension!`, 'success');
+        } else {
+          showSyncInstructions();
+        }
+      }
+    };
+    
+    window.addEventListener('message', messageListener);
+    
+    // Show instructions after a short delay if no response
+    setTimeout(() => {
+      window.removeEventListener('message', messageListener);
+      showSyncInstructions();
+    }, 1000);
+  }
+}
+
+// Show sync instructions
+function showSyncInstructions() {
+  const instructions = `
+    <div style="text-align: left; padding: 20px;">
+      <h3 style="margin-bottom: 15px; color: #ff69b4;">📋 How to Sync from Extension</h3>
+      <ol style="line-height: 2; margin-left: 20px; font-size: 15px;">
+        <li style="margin-bottom: 10px;">Click the <strong>Clipboard Manager</strong> extension icon in your browser toolbar</li>
+        <li style="margin-bottom: 10px;">Click the <strong>🌐 Sync</strong> button in the extension popup</li>
+        <li style="margin-bottom: 10px;">This will automatically open this page with all your clipboard data!</li>
+      </ol>
+      <div style="background: linear-gradient(135deg, rgba(255, 240, 250, 0.95) 0%, rgba(255, 228, 245, 0.95) 100%); padding: 15px; border-radius: 12px; margin-top: 20px; border: 2px solid rgba(255, 182, 193, 0.4);">
+        <p style="margin: 0; color: #666; font-size: 14px;">
+          <strong>💡 Tip:</strong> The extension sync button automatically transfers your data to this page. No manual copying needed!
+        </p>
+      </div>
+    </div>
+  `;
+  
+  // Create a modal with instructions
+  const modal = document.createElement('div');
+  modal.className = 'modal show';
+  modal.innerHTML = `
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2>🔄 Sync from Extension</h2>
+        <button class="close-modal" onclick="this.closest('.modal').remove()">&times;</button>
+      </div>
+      <div class="modal-body">
+        ${instructions}
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" onclick="this.closest('.modal').remove()">Got it! ✨</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  
+  // Close on outside click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+  
+  // Close on Escape key
+  const escapeHandler = (e) => {
+    if (e.key === 'Escape') {
+      modal.remove();
+      document.removeEventListener('keydown', escapeHandler);
+    }
+  };
+  document.addEventListener('keydown', escapeHandler);
 }
 
 // Check for duplicates

@@ -165,7 +165,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     return true;
   }
-  
+
   if (request.action === 'checkClipboard') {
     // Background script asking us to check clipboard
     if (navigator.clipboard && navigator.clipboard.readText) {
@@ -186,6 +186,41 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       sendResponse({ success: false });
     }
     return true;
+  }
+
+  if (request.action === 'exportData') {
+    // Website requesting data - forward to background
+    chrome.runtime.sendMessage({ action: 'exportData' }, (response) => {
+      if (response && response.data) {
+        // Send data back to website via postMessage
+        window.postMessage({
+          type: 'CLIPBOARD_MANAGER_SYNC_RESPONSE',
+          source: 'clipboard-manager-extension',
+          data: response.data
+        }, '*');
+      }
+      sendResponse({ success: true });
+    });
+    return true;
+  }
+});
+
+// Listen for sync requests from website
+window.addEventListener('message', (event) => {
+  // Only accept messages from the same origin or clipboard manager website
+  if (event.data && event.data.type === 'CLIPBOARD_MANAGER_SYNC_REQUEST' && 
+      event.data.source === 'clipboard-manager-web') {
+    // Request data from background script
+    chrome.runtime.sendMessage({ action: 'exportData' }, (response) => {
+      if (response && response.data) {
+        // Send data back to website
+        window.postMessage({
+          type: 'CLIPBOARD_MANAGER_SYNC_RESPONSE',
+          source: 'clipboard-manager-extension',
+          data: response.data
+        }, '*');
+      }
+    });
   }
 });
 
