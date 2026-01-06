@@ -35,12 +35,27 @@ const statsModal = document.getElementById('statsModal');
 const statsBtn = document.getElementById('statsBtn');
 const duplicateBtn = document.getElementById('duplicateBtn');
 const fileInput = document.getElementById('fileInput');
+const loginBtn = document.getElementById('loginBtn');
+const userDashboardBtn = document.getElementById('userDashboardBtn');
+const loginModal = document.getElementById('loginModal');
+const registerModal = document.getElementById('registerModal');
+const userDashboardModal = document.getElementById('userDashboardModal');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const logoutBtn = document.getElementById('logoutBtn');
+const contactForm = document.getElementById('contactForm');
+const saveDashboardSettingsBtn = document.getElementById('saveDashboardSettings');
+
+// Authentication state
+let isLoggedIn = false;
+let currentUser = null;
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   initVisualEffects();
   loadFromStorage();
+  checkAuthState();
   setupEventListeners();
   setupKeyboardShortcuts();
   checkForDuplicates();
@@ -423,6 +438,39 @@ function setupEventListeners() {
   favoritesBtn?.addEventListener('click', showFavorites);
   duplicateBtn?.addEventListener('click', showDuplicateModal);
   statsBtn?.addEventListener('click', showStats);
+  
+  // Authentication event listeners
+  loginBtn?.addEventListener('click', () => loginModal?.classList.add('show'));
+  userDashboardBtn?.addEventListener('click', () => showUserDashboard());
+  logoutBtn?.addEventListener('click', handleLogout);
+  loginForm?.addEventListener('submit', handleLogin);
+  registerForm?.addEventListener('submit', handleRegister);
+  document.getElementById('showRegisterLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    loginModal?.classList.remove('show');
+    registerModal?.classList.add('show');
+  });
+  document.getElementById('showLoginLink')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    registerModal?.classList.remove('show');
+    loginModal?.classList.add('show');
+  });
+  
+  // Dashboard settings
+  saveDashboardSettingsBtn?.addEventListener('click', saveDashboardSettings);
+  document.getElementById('exportAllDataBtn')?.addEventListener('click', () => {
+    showExportModal();
+    userDashboardModal?.classList.remove('show');
+  });
+  document.getElementById('clearAllDataBtn')?.addEventListener('click', () => {
+    if (confirm('Are you sure you want to clear all data? This cannot be undone!')) {
+      handleClearAll();
+      userDashboardModal?.classList.remove('show');
+    }
+  });
+  
+  // Contact form
+  contactForm?.addEventListener('submit', handleContactSubmit);
   
   // Modal close buttons
   document.querySelectorAll('.close-modal').forEach(btn => {
@@ -1625,6 +1673,213 @@ function showToast(message, type = 'info') {
     toast.classList.remove('show');
     setTimeout(() => toast.remove(), 300);
   }, 4000);
+}
+
+// Authentication functions
+function checkAuthState() {
+  const userData = localStorage.getItem('userData');
+  if (userData) {
+    try {
+      currentUser = JSON.parse(userData);
+      isLoggedIn = true;
+      updateAuthUI();
+    } catch (e) {
+      console.error('Error parsing user data:', e);
+      localStorage.removeItem('userData');
+    }
+  } else {
+    isLoggedIn = false;
+    currentUser = null;
+    updateAuthUI();
+  }
+}
+
+function updateAuthUI() {
+  if (isLoggedIn && currentUser) {
+    if (loginBtn) loginBtn.style.display = 'none';
+    if (userDashboardBtn) userDashboardBtn.style.display = 'inline-block';
+    if (document.getElementById('userName')) {
+      document.getElementById('userName').textContent = `Welcome back, ${currentUser.name}!`;
+      document.getElementById('userEmail').textContent = currentUser.email;
+    }
+  } else {
+    if (loginBtn) loginBtn.style.display = 'inline-block';
+    if (userDashboardBtn) userDashboardBtn.style.display = 'none';
+  }
+}
+
+function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const rememberMe = document.getElementById('rememberMe').checked;
+  
+  // Simple client-side authentication (for demo purposes)
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  const user = users.find(u => u.email === email && u.password === password);
+  
+  if (user) {
+    currentUser = {
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt
+    };
+    isLoggedIn = true;
+    localStorage.setItem('userData', JSON.stringify(currentUser));
+    if (rememberMe) {
+      localStorage.setItem('rememberMe', 'true');
+    }
+    updateAuthUI();
+    loginModal.classList.remove('show');
+    loginForm.reset();
+    showToast('✨ Successfully logged in! Welcome back! 💖', 'success');
+  } else {
+    showToast('❌ Invalid email or password. Please try again or sign up!', 'error');
+  }
+}
+
+function handleRegister(e) {
+  e.preventDefault();
+  const name = document.getElementById('registerName').value;
+  const email = document.getElementById('registerEmail').value;
+  const password = document.getElementById('registerPassword').value;
+  const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+  
+  if (password !== passwordConfirm) {
+    showToast('❌ Passwords do not match!', 'error');
+    return;
+  }
+  
+  if (password.length < 6) {
+    showToast('❌ Password must be at least 6 characters long!', 'error');
+    return;
+  }
+  
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  
+  if (users.find(u => u.email === email)) {
+    showToast('❌ An account with this email already exists!', 'error');
+    return;
+  }
+  
+  const newUser = {
+    name: name,
+    email: email,
+    password: password,
+    createdAt: Date.now()
+  };
+  
+  users.push(newUser);
+  localStorage.setItem('users', JSON.stringify(users));
+  
+  currentUser = {
+    name: name,
+    email: email,
+    createdAt: newUser.createdAt
+  };
+  isLoggedIn = true;
+  localStorage.setItem('userData', JSON.stringify(currentUser));
+  updateAuthUI();
+  registerModal.classList.remove('show');
+  registerForm.reset();
+  showToast('✨ Account created successfully! Welcome! 💖', 'success');
+}
+
+function handleLogout() {
+  if (confirm('Are you sure you want to logout?')) {
+    isLoggedIn = false;
+    currentUser = null;
+    localStorage.removeItem('userData');
+    if (!localStorage.getItem('rememberMe')) {
+      localStorage.removeItem('rememberMe');
+    }
+    updateAuthUI();
+    userDashboardModal.classList.remove('show');
+    showToast('👋 Logged out successfully! See you soon! 💖', 'info');
+  }
+}
+
+function showUserDashboard() {
+  if (!isLoggedIn) {
+    loginModal.classList.add('show');
+    return;
+  }
+  
+  const total = clipboardItems.length;
+  const favorites = clipboardItems.filter(item => item.isFavorite).length;
+  const totalCopies = clipboardItems.reduce((sum, item) => sum + (item.copyCount || 0), 0);
+  
+  if (document.getElementById('dashboardTotalItems')) document.getElementById('dashboardTotalItems').textContent = total;
+  if (document.getElementById('dashboardFavorites')) document.getElementById('dashboardFavorites').textContent = favorites;
+  if (document.getElementById('dashboardCopies')) document.getElementById('dashboardCopies').textContent = totalCopies;
+  
+  if (currentUser && currentUser.createdAt) {
+    const createdDate = new Date(currentUser.createdAt);
+    if (document.getElementById('dashboardCreated')) document.getElementById('dashboardCreated').textContent = createdDate.toLocaleDateString();
+  }
+  
+  const settings = JSON.parse(localStorage.getItem('userSettings') || '{}');
+  if (settings.autoSync !== undefined && document.getElementById('settingAutoSync')) document.getElementById('settingAutoSync').checked = settings.autoSync;
+  if (settings.notifications !== undefined && document.getElementById('settingNotifications')) document.getElementById('settingNotifications').checked = settings.notifications;
+  if (settings.darkMode !== undefined && document.getElementById('settingDarkMode')) document.getElementById('settingDarkMode').checked = settings.darkMode;
+  if (settings.maxItems && document.getElementById('settingMaxItems')) document.getElementById('settingMaxItems').value = settings.maxItems;
+  if (settings.notifyNewItems !== undefined && document.getElementById('settingNotifyNewItems')) document.getElementById('settingNotifyNewItems').checked = settings.notifyNewItems;
+  if (settings.notifySync !== undefined && document.getElementById('settingNotifySync')) document.getElementById('settingNotifySync').checked = settings.notifySync;
+  if (settings.notifyDuplicates !== undefined && document.getElementById('settingNotifyDuplicates')) document.getElementById('settingNotifyDuplicates').checked = settings.notifyDuplicates;
+  if (settings.themeColor && document.getElementById('settingThemeColor')) document.getElementById('settingThemeColor').value = settings.themeColor;
+  if (settings.viewMode && document.getElementById('settingViewMode')) document.getElementById('settingViewMode').value = settings.viewMode;
+  if (settings.compactMode !== undefined && document.getElementById('settingCompactMode')) document.getElementById('settingCompactMode').checked = settings.compactMode;
+  if (settings.encryptData !== undefined && document.getElementById('settingEncryptData')) document.getElementById('settingEncryptData').checked = settings.encryptData;
+  if (settings.autoClear !== undefined && document.getElementById('settingAutoClear')) document.getElementById('settingAutoClear').checked = settings.autoClear;
+  
+  userDashboardModal.classList.add('show');
+}
+
+function saveDashboardSettings() {
+  const settings = {
+    autoSync: document.getElementById('settingAutoSync')?.checked || false,
+    notifications: document.getElementById('settingNotifications')?.checked || false,
+    darkMode: document.getElementById('settingDarkMode')?.checked || false,
+    maxItems: parseInt(document.getElementById('settingMaxItems')?.value) || 5000,
+    notifyNewItems: document.getElementById('settingNotifyNewItems')?.checked || false,
+    notifySync: document.getElementById('settingNotifySync')?.checked || false,
+    notifyDuplicates: document.getElementById('settingNotifyDuplicates')?.checked || false,
+    themeColor: document.getElementById('settingThemeColor')?.value || 'pink',
+    viewMode: document.getElementById('settingViewMode')?.value || 'grid',
+    compactMode: document.getElementById('settingCompactMode')?.checked || false,
+    encryptData: document.getElementById('settingEncryptData')?.checked || false,
+    autoClear: document.getElementById('settingAutoClear')?.checked || false
+  };
+  
+  localStorage.setItem('userSettings', JSON.stringify(settings));
+  showToast('✨ Settings saved successfully! 💖', 'success');
+  
+  if (settings.darkMode && !isDarkMode) {
+    toggleDarkMode();
+  } else if (!settings.darkMode && isDarkMode) {
+    toggleDarkMode();
+  }
+}
+
+function handleContactSubmit(e) {
+  e.preventDefault();
+  
+  const formData = {
+    name: document.getElementById('contactName').value,
+    email: document.getElementById('contactEmail').value,
+    subject: document.getElementById('contactSubject').value,
+    message: document.getElementById('contactMessage').value,
+    newsletter: document.getElementById('contactNewsletter').checked,
+    timestamp: Date.now()
+  };
+  
+  const submissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+  submissions.push(formData);
+  localStorage.setItem('contactSubmissions', JSON.stringify(submissions));
+  
+  showToast('✨ Thank you for your message! We\'ll get back to you soon! 💖', 'success');
+  contactForm.reset();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 // Make functions globally available
