@@ -950,7 +950,17 @@ function handleFilterChange(e) {
 function applySortAndFilter() {
   let items = [...clipboardItems];
   
-  // Apply filters
+  // Apply search filter first
+  if (searchQuery) {
+    items = items.filter(item => 
+      item.text.toLowerCase().includes(searchQuery) ||
+      item.tags?.some(tag => tag.toLowerCase().includes(searchQuery)) ||
+      item.type?.toLowerCase().includes(searchQuery) ||
+      item.preview?.toLowerCase().includes(searchQuery)
+    );
+  }
+  
+  // Apply type filters
   if (filterMode === 'favorites') {
     items = items.filter(item => item.isFavorite);
   } else if (filterMode === 'urls') {
@@ -958,7 +968,18 @@ function applySortAndFilter() {
   } else if (filterMode === 'emails') {
     items = items.filter(item => item.type === 'email');
   } else if (filterMode === 'code') {
-    items = items.filter(item => item.type === 'code' || item.type === 'json');
+    items = items.filter(item => item.type === 'code');
+  } else if (filterMode === 'json') {
+    items = items.filter(item => item.type === 'json');
+  } else if (filterMode === 'numbers') {
+    items = items.filter(item => item.type === 'number');
+  } else if (filterMode === 'recent') {
+    const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+    items = items.filter(item => item.timestamp > oneDayAgo);
+  } else if (filterMode === 'long') {
+    items = items.filter(item => item.text.length > 200);
+  } else if (filterMode === 'short') {
+    items = items.filter(item => item.text.length <= 50);
   }
   
   // Apply tags filter
