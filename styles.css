@@ -8,7 +8,7 @@ body {
   font-family: 'Comic Sans MS', 'Segoe UI Emoji', 'Apple Color Emoji', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background: linear-gradient(135deg, #ffb3d9 0%, #ffcce5 25%, #e6b3ff 50%, #c299ff 75%, #b3d9ff 100%);
   background-size: 400% 400%;
-  animation: kawaiiGradient 15s ease infinite;
+  animation: kawaiiGradient 60s ease infinite;
   min-height: 100vh;
   color: #333;
   position: relative;
@@ -39,12 +39,12 @@ body::before {
     radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-  animation: float 20s ease-in-out infinite;
+  animation: float 40s ease-in-out infinite;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Kawaii floating sparkles and hearts - ENHANCED */
+/* Kawaii floating sparkles and hearts - REDUCED */
 body::after {
   content: '✨ 💖 🌸 🎀 💕 ⭐ 💫 🌈 🦄 🍓 💜 💝 🌺 🎁 💗 🎈 🦋 🌻 🍰 🎪 🎨 🎭 🎯 🎲 🎸 🎹 🐹 🐰 🐱 🐶 🦊 🐼 🐨 🦁 🐯 🦄 🦋 🦉 🐸 🐷 🐮 🐰 🌸 🌺 🌻 🌷 🌹 🌼 🌿 🍀 🍄 🌈 ⭐ 💫 ✨ 💖 💕 💗 💝 💜 💙 💚 💛 🧡 ❤️ 🎀 🎁 🎂 🍰 🍭 🍬 🍫 🍪 🥨 🍩 🍰 🎂';
   position: fixed;
@@ -54,16 +54,14 @@ body::after {
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.25;
+  opacity: 0.15;
   font-size: 40px;
-  animation: float-emojis 15s ease-in-out infinite, pulse-emojis 3s ease-in-out infinite, emoji-rain 20s linear infinite;
+  animation: float-emojis 30s ease-in-out infinite;
   background: none;
   text-shadow: 
-    0 0 20px rgba(255, 182, 193, 0.7),
-    0 0 35px rgba(255, 192, 203, 0.5),
-    0 0 50px rgba(255, 105, 180, 0.3),
-    0 0 70px rgba(255, 182, 193, 0.2);
-  filter: blur(0.3px);
+    0 0 20px rgba(255, 182, 193, 0.5),
+    0 0 35px rgba(255, 192, 203, 0.3);
+  filter: blur(0.5px);
 }
 
 @keyframes emoji-rain {
@@ -75,14 +73,8 @@ body::after {
   0%, 100% {
     transform: translateY(0) translateX(0) rotate(0deg);
   }
-  25% {
-    transform: translateY(-40px) translateX(30px) rotate(5deg);
-  }
   50% {
-    transform: translateY(-60px) translateX(-30px) rotate(-5deg);
-  }
-  75% {
-    transform: translateY(-40px) translateX(15px) rotate(3deg);
+    transform: translateY(-20px) translateX(10px) rotate(2deg);
   }
 }
 
@@ -101,11 +93,8 @@ body::after {
   0%, 100% {
     transform: translateY(0) translateX(0);
   }
-  33% {
-    transform: translateY(-20px) translateX(10px);
-  }
-  66% {
-    transform: translateY(20px) translateX(-10px);
+  50% {
+    transform: translateY(-10px) translateX(5px);
   }
 }
 
@@ -141,8 +130,8 @@ header::before {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  animation: shine 3s infinite, rainbow-shine 8s infinite;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: shine 8s infinite;
 }
 
 header::after {
@@ -151,10 +140,10 @@ header::after {
   top: 10px;
   right: 10px;
   font-size: 14px;
-  opacity: 0.4;
-  animation: sparkle-rotate 4s ease-in-out infinite;
+  opacity: 0.3;
+  animation: sparkle-rotate 8s ease-in-out infinite;
   pointer-events: none;
-  filter: drop-shadow(0 0 8px rgba(255, 182, 193, 0.6));
+  filter: drop-shadow(0 0 8px rgba(255, 182, 193, 0.4));
 }
 
 @keyframes rainbow-shine {
@@ -164,8 +153,8 @@ header::after {
 }
 
 @keyframes sparkle-rotate {
-  0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.4; }
-  50% { transform: rotate(180deg) scale(1.2); opacity: 0.7; }
+  0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.3; }
+  50% { transform: rotate(90deg) scale(1.05); opacity: 0.4; }
 }
 
 @keyframes slideDown {
@@ -198,7 +187,7 @@ header::after {
 
 .cute-hamster-mascot {
   font-size: 100px;
-  animation: kawaiiBounce 2s ease-in-out infinite, hamster-wiggle 3s ease-in-out infinite;
+  animation: kawaiiBounce 4s ease-in-out infinite;
   cursor: pointer;
   transition: all 0.3s;
   filter: drop-shadow(0 10px 20px rgba(255, 182, 193, 0.5)) drop-shadow(0 0 30px rgba(255, 192, 203, 0.7)) drop-shadow(0 0 50px rgba(255, 105, 180, 0.4));
@@ -219,9 +208,9 @@ header::after {
   top: -30px;
   left: -30px;
   font-size: 35px;
-  animation: sparkle 1.5s ease-in-out infinite, float-around 4s ease-in-out infinite;
-  opacity: 0.9;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.8));
+  animation: sparkle 3s ease-in-out infinite;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.6));
 }
 
 .cute-hamster-mascot::after {
@@ -230,9 +219,9 @@ header::after {
   top: -25px;
   right: -25px;
   font-size: 30px;
-  animation: sparkle 1.8s ease-in-out infinite 0.3s, float-around 4.5s ease-in-out infinite 0.5s;
-  opacity: 0.9;
-  filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.8));
+  animation: sparkle 3.5s ease-in-out infinite 0.5s;
+  opacity: 0.7;
+  filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
 }
 
 @keyframes float-around {
@@ -252,14 +241,8 @@ header::after {
   0%, 100% {
     transform: translateY(0) rotate(0deg) scale(1);
   }
-  25% {
-    transform: translateY(-12px) rotate(-8deg) scale(1.05);
-  }
   50% {
-    transform: translateY(-18px) rotate(0deg) scale(1.1);
-  }
-  75% {
-    transform: translateY(-12px) rotate(8deg) scale(1.05);
+    transform: translateY(-8px) rotate(0deg) scale(1.02);
   }
 }
 
@@ -321,7 +304,7 @@ header h1 {
 .subtitle {
   color: #ff69b4;
   font-size: 20px;
-  animation: fadeInUp 0.8s ease-out 0.2s both, subtitle-glow 2s ease-in-out infinite;
+  animation: fadeInUp 0.8s ease-out 0.2s both;
   font-weight: 600;
   text-shadow: 
     0 0 10px rgba(255, 182, 193, 0.5),
@@ -361,12 +344,12 @@ header h1 {
   border: 3px solid rgba(255, 255, 255, 0.5);
   position: relative;
   overflow: hidden;
-  animation: button-glow 2s ease-in-out infinite;
+  animation: button-glow 4s ease-in-out infinite;
 }
 
 @keyframes button-glow {
   0%, 100% { box-shadow: 0 10px 30px rgba(255, 105, 180, 0.5), 0 0 0 4px rgba(255, 192, 203, 0.4) inset, 0 0 30px rgba(255, 182, 193, 0.4), 0 0 60px rgba(255, 105, 180, 0.2); }
-  50% { box-shadow: 0 12px 35px rgba(255, 105, 180, 0.6), 0 0 0 5px rgba(255, 192, 203, 0.5) inset, 0 0 40px rgba(255, 182, 193, 0.5), 0 0 80px rgba(255, 105, 180, 0.3); }
+  50% { box-shadow: 0 11px 32px rgba(255, 105, 180, 0.55), 0 0 0 4px rgba(255, 192, 203, 0.45) inset, 0 0 35px rgba(255, 182, 193, 0.45), 0 0 70px rgba(255, 105, 180, 0.25); }
 }
 
 .btn-download::after {
@@ -382,7 +365,7 @@ header h1 {
 }
   position: relative;
   overflow: hidden;
-  animation: gradientShift 3s ease infinite, pulse 2s ease-in-out infinite;
+  animation: gradientShift 6s ease infinite;
 }
 
 .btn-download::before {
@@ -523,7 +506,7 @@ header h1 {
     0 10px 30px rgba(255, 182, 193, 0.2),
     0 0 0 2px rgba(255, 192, 203, 0.2) inset,
     0 0 20px rgba(255, 182, 193, 0.1);
-  animation: card-float 6s ease-in-out infinite;
+  animation: none;
 }
 
 @keyframes card-float {
@@ -631,7 +614,7 @@ header h1 {
   color: #ff69b4;
   margin-bottom: 12px;
   text-shadow: 0 2px 4px rgba(255, 182, 193, 0.3);
-  animation: title-pulse 2s ease-in-out infinite;
+  animation: title-pulse 4s ease-in-out infinite;
 }
 
 @keyframes title-pulse {
@@ -1008,7 +991,7 @@ body.dark-mode .use-case p {
 .empty-icon {
   font-size: 80px;
   margin-bottom: 20px;
-  animation: bounce 2s ease-in-out infinite, icon-spin 4s linear infinite;
+  animation: bounce 4s ease-in-out infinite;
   filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.2)) drop-shadow(0 0 20px rgba(255, 182, 193, 0.4));
   position: relative;
 }
@@ -1041,7 +1024,7 @@ body.dark-mode .use-case p {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
   }
 }
 
@@ -1052,7 +1035,7 @@ body.dark-mode .use-case p {
   color: #ff69b4;
   font-weight: 800;
   text-shadow: 0 2px 4px rgba(255, 182, 193, 0.4);
-  animation: title-pulse 2s ease-in-out infinite;
+  animation: title-pulse 4s ease-in-out infinite;
 }
 
 .empty-state p {
