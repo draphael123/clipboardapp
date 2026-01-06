@@ -34,6 +34,7 @@ const tagsInput = document.getElementById('tagsInput');
 const statsModal = document.getElementById('statsModal');
 const statsBtn = document.getElementById('statsBtn');
 const duplicateBtn = document.getElementById('duplicateBtn');
+const fileInput = document.getElementById('fileInput');
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -351,7 +352,7 @@ function closeAllModals() {
 // Setup event listeners
 function setupEventListeners() {
   searchInput?.addEventListener('input', debounce(handleSearch, 300));
-  importBtn?.addEventListener('click', () => fileInput?.click());
+  importBtn?.addEventListener('click', showImportModal);
   fileInput?.addEventListener('change', handleFileImport);
   exportBtn?.addEventListener('click', () => showExportModal());
   clearAllBtn?.addEventListener('click', handleClearAll);
@@ -1174,39 +1175,84 @@ function handleConfirmImport() {
     return;
   }
   
+  isLoading = true;
+  renderItems();
+  showToast('Importing data...', 'info');
+  
   try {
     const data = JSON.parse(text);
-    if (Array.isArray(data)) {
+    if (Array.isArray(data) && data.length > 0) {
       importData(data);
       document.getElementById('importModal')?.classList.remove('show');
       document.getElementById('importText').value = '';
     } else {
-      throw new Error('Invalid data format');
+      throw new Error('Invalid data format - must be a non-empty array');
     }
   } catch (error) {
+    console.error('Import error:', error);
     showToast('Error importing data: ' + error.message, 'error');
+    isLoading = false;
+    renderItems();
   }
 }
 
 // Import data
 function importData(data) {
-  const existingIds = new Set(clipboardItems.map(item => item.id));
-  const newItems = data
-    .filter(item => !existingIds.has(item.id))
-    .map(item => enhanceItem(item));
-  
-  clipboardItems = [...newItems, ...clipboardItems];
-  
-  if (clipboardItems.length > 5000) {
-    clipboardItems = clipboardItems.slice(0, 5000);
-    showToast('Reached maximum capacity. Oldest items removed.', 'warning');
+  try {
+    if (!Array.isArray(data)) {
+      throw new Error('Data must be an array');
+    }
+    
+    const existingIds = new Set(clipboardItems.map(item => item.id));
+    const newItems = data
+      .filter(item => item && (item.text || item.id)) // Validate item structure
+      .map(item => {
+        // Ensure item has required fields
+        const enhanced = enhanceItem({
+          id: item.id || Date.now().toString() + Math.random(),
+          text: item.text || '',
+          timestamp: item.timestamp || Date.now(),
+          preview: item.preview || (item.text ? item.text.substring(0, 100) : ''),
+          copyCount: item.copyCount || 0,
+          isFavorite: item.isFavorite || false,
+          tags: item.tags || [],
+          type: item.type,
+          wordCount: item.wordCount,
+          charCount: item.charCount
+        });
+        return enhanced;
+      })
+      .filter(item => !existingIds.has(item.id)); // Remove duplicates
+    
+    if (newItems.length === 0) {
+      showToast('No new items to import (all items already exist)', 'info');
+      isLoading = false;
+      renderItems();
+      return;
+    }
+    
+    clipboardItems = [...newItems, ...clipboardItems];
+    
+    if (clipboardItems.length > 5000) {
+      const removed = clipboardItems.length - 5000;
+      clipboardItems = clipboardItems.slice(0, 5000);
+      showToast(`Imported ${newItems.length} items! (${removed} oldest items removed to stay under 5000 limit)`, 'warning');
+    } else {
+      showToast(`✨ Successfully imported ${newItems.length} new items! 💖`, 'success');
+    }
+    
+    filteredItems = clipboardItems;
+    applySortAndFilter();
+    saveToStorage();
+    updateStats();
+    isLoading = false;
+    renderItems();
+  } catch (error) {
+    console.error('Import data error:', error);
+    showToast('Error importing data: ' + error.message, 'error');
+    isLoading = false;
+    renderItems();
   }
-  
-  filteredItems = clipboardItems;
-  applySortAndFilter();
-  saveToStorage();
-  renderItems();
-  showToast(`Imported ${newItems.length} new items!`, 'success');
 }
 
 // Handle clear all

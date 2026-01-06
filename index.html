@@ -251,11 +251,16 @@
         <button class="close-modal" aria-label="Close">&times;</button>
       </div>
       <div class="modal-body">
-        <p>Paste your exported JSON data below or select a file:</p>
-        <textarea id="importText" placeholder='[{"id":"...","text":"...","timestamp":...}]' aria-label="Import JSON data"></textarea>
+        <p style="margin-bottom: 16px; font-family: 'Comic Sans MS', sans-serif; color: #ff69b4; font-weight: 600;">✨ Import your clipboard data! 💖</p>
+        <p style="margin-bottom: 12px; font-size: 14px; color: #666;">Paste your exported JSON data below or select a file:</p>
+        <textarea id="importText" placeholder='[{"id":"...","text":"...","timestamp":...}]' aria-label="Import JSON data" style="min-height: 200px; font-family: monospace; font-size: 13px;"></textarea>
+        <div style="margin-top: 12px;">
+          <input type="file" id="fileInput" accept=".json,.csv,.txt" style="display: none;" aria-label="Import file">
+          <button onclick="document.getElementById('fileInput').click()" class="btn btn-secondary" style="width: 100%; margin-bottom: 8px;">📁 Or Select File</button>
+        </div>
         <div class="modal-actions">
           <button id="cancelImport" class="btn btn-secondary">Cancel</button>
-          <button id="confirmImport" class="btn btn-primary">Import</button>
+          <button id="confirmImport" class="btn btn-primary">✨ Import</button>
         </div>
       </div>
     </div>
