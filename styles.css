@@ -858,16 +858,17 @@ body.dark-mode .use-case p {
 .btn {
   padding: 14px 28px;
   border: none;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: inline-flex;
   align-items: center;
   gap: 8px;
   position: relative;
   overflow: hidden;
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
 }
 
 .btn::before {
@@ -889,27 +890,46 @@ body.dark-mode .use-case p {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #ff69b4 0%, #ff1493 50%, #ffb6c1 100%);
   color: white;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4), 0 0 20px rgba(255, 182, 193, 0.3);
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
+  font-weight: 700;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  animation: button-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes button-shimmer {
+  0%, 100% { box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4), 0 0 20px rgba(255, 182, 193, 0.3); }
+  50% { box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6), 0 0 30px rgba(255, 182, 193, 0.5), 0 0 40px rgba(255, 105, 180, 0.3); }
 }
 
 .btn-primary:hover {
-  background: linear-gradient(135deg, #5568d3 0%, #6a3d8f 100%);
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+  background: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #ffb6c1 100%);
+  transform: translateY(-5px) scale(1.05) rotate(2deg);
+  box-shadow: 0 10px 30px rgba(255, 105, 180, 0.6), 0 0 40px rgba(255, 182, 193, 0.5), 0 0 60px rgba(255, 105, 180, 0.4);
+  animation: button-bounce 0.5s ease;
+}
+
+@keyframes button-bounce {
+  0%, 100% { transform: translateY(-5px) scale(1.05) rotate(2deg); }
+  50% { transform: translateY(-8px) scale(1.08) rotate(-2deg); }
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-  color: #333;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, rgba(255, 240, 250, 0.95) 0%, rgba(255, 228, 245, 0.95) 100%);
+  color: #ff69b4;
+  border: 2px solid rgba(255, 182, 193, 0.4);
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 182, 193, 0.3);
 }
 
 .btn-secondary:hover {
-  background: linear-gradient(135deg, #e8e8e8 0%, #d8d8d8 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, rgba(255, 245, 250, 1) 0%, rgba(255, 235, 250, 1) 100%);
+  transform: translateY(-3px) scale(1.03) rotate(1deg);
+  box-shadow: 0 6px 15px rgba(255, 182, 193, 0.5), 0 0 20px rgba(255, 192, 203, 0.4);
+  border-color: #ff69b4;
 }
 
 .btn-danger {
