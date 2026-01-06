@@ -1099,6 +1099,18 @@ function handleExport(items = null) {
   showToast(`Exported ${data.length} items as ${format.toUpperCase()}!`, 'success');
 }
 
+// Show import modal
+function showImportModal() {
+  const modal = document.getElementById('importModal');
+  if (modal) {
+    modal.classList.add('show');
+    document.getElementById('importText')?.focus();
+  } else {
+    // Fallback: trigger file input if modal doesn't exist
+    fileInput?.click();
+  }
+}
+
 // Handle file import
 function handleFileImport(e) {
   const file = e.target.files[0];
@@ -1106,6 +1118,7 @@ function handleFileImport(e) {
   
   isLoading = true;
   renderItems();
+  showToast('📥 Importing file...', 'info');
   
   const reader = new FileReader();
   reader.onload = (event) => {
@@ -1118,28 +1131,37 @@ function handleFileImport(e) {
       } else if (file.name.endsWith('.json')) {
         data = JSON.parse(text);
       } else {
-        data = text.split('\n\n').filter(line => line.trim()).map((text, index) => ({
-          id: Date.now() + index,
+        // Plain text - split by double newlines or lines
+        data = text.split(/\n\n+/).filter(line => line.trim()).map((text, index) => ({
+          id: Date.now().toString() + index,
           text: text.trim(),
           timestamp: Date.now(),
-          preview: text.substring(0, 100)
+          preview: text.trim().substring(0, 100)
         }));
       }
       
-      if (Array.isArray(data)) {
+      if (Array.isArray(data) && data.length > 0) {
         importData(data);
       } else {
-        throw new Error('Invalid data format');
+        throw new Error('Invalid data format or empty file');
       }
     } catch (error) {
-      showToast('Error importing file: ' + error.message, 'error');
-    } finally {
+      console.error('Import error:', error);
+      showToast('❌ Error importing file: ' + error.message, 'error');
       isLoading = false;
       renderItems();
     }
   };
+  
+  reader.onerror = () => {
+    showToast('❌ Error reading file', 'error');
+    isLoading = false;
+    renderItems();
+  };
+  
   reader.readAsText(file);
-  fileInput.value = '';
+  // Reset file input so same file can be imported again
+  if (fileInput) fileInput.value = '';
 }
 
 // Parse CSV
