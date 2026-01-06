@@ -229,6 +229,8 @@ function closeAllModals() {
 // Setup event listeners
 function setupEventListeners() {
   searchInput?.addEventListener('input', debounce(handleSearch, 300));
+  searchInput?.addEventListener('input', handleSearchInput);
+  document.getElementById('clearSearchBtn')?.addEventListener('click', clearSearch);
   clearAllBtn?.addEventListener('click', handleClearAll);
   addManualBtn?.addEventListener('click', () => showModal('addModal'));
   syncBtn?.addEventListener('click', handleSync);
@@ -591,20 +593,39 @@ function removeTag(id, tag) {
 }
 
 // Handle search
+let searchQuery = '';
+
 function handleSearch(e) {
-  const query = e.target.value.toLowerCase().trim();
-  
-  if (query === '') {
-    filteredItems = clipboardItems;
-  } else {
-    filteredItems = clipboardItems.filter(item => 
-      item.text.toLowerCase().includes(query) ||
-      item.tags?.some(tag => tag.toLowerCase().includes(query))
-    );
-  }
-  
+  searchQuery = e.target.value.toLowerCase().trim();
   applySortAndFilter();
   renderItems();
+  updateItemCount();
+}
+
+// Handle search input changes (for UI updates)
+function handleSearchInput(e) {
+  const clearBtn = document.getElementById('clearSearchBtn');
+  if (clearBtn) {
+    if (e.target.value.trim()) {
+      clearBtn.style.display = 'block';
+    } else {
+      clearBtn.style.display = 'none';
+    }
+  }
+}
+
+// Clear search
+function clearSearch() {
+  if (searchInput) {
+    searchInput.value = '';
+    searchQuery = '';
+    applySortAndFilter();
+    renderItems();
+    updateItemCount();
+    searchInput.focus();
+    const clearBtn = document.getElementById('clearSearchBtn');
+    if (clearBtn) clearBtn.style.display = 'none';
+  }
 }
 
 // Handle sort change
@@ -612,6 +633,7 @@ function handleSortChange(e) {
   sortMode = e.target.value;
   applySortAndFilter();
   renderItems();
+  updateItemCount();
 }
 
 // Handle filter change
@@ -619,13 +641,24 @@ function handleFilterChange(e) {
   filterMode = e.target.value;
   applySortAndFilter();
   renderItems();
+  updateItemCount();
 }
 
 // Apply sort and filter
 function applySortAndFilter() {
   let items = [...clipboardItems];
   
-  // Apply filters
+  // Apply search filter first
+  if (searchQuery) {
+    items = items.filter(item => 
+      item.text.toLowerCase().includes(searchQuery) ||
+      item.tags?.some(tag => tag.toLowerCase().includes(searchQuery)) ||
+      item.type?.toLowerCase().includes(searchQuery) ||
+      item.preview?.toLowerCase().includes(searchQuery)
+    );
+  }
+  
+  // Apply type filters
   if (filterMode === 'favorites') {
     items = items.filter(item => item.isFavorite);
   } else if (filterMode === 'urls') {
@@ -769,7 +802,13 @@ function handleSync() {
 // Update item count
 function updateItemCount() {
   if (itemCount) {
-    itemCount.textContent = `${clipboardItems.length} / 5000 items`;
+    const total = clipboardItems.length;
+    const filtered = filteredItems.length;
+    if (searchQuery || filterMode !== 'all') {
+      itemCount.textContent = `${filtered} / ${total} items${searchQuery ? ` (searching)` : ''}`;
+    } else {
+      itemCount.textContent = `${total} / 5000 items`;
+    }
   }
 }
 
