@@ -228,8 +228,19 @@ function closeAllModals() {
 
 // Setup event listeners
 function setupEventListeners() {
-  searchInput?.addEventListener('input', debounce(handleSearch, 300));
-  searchInput?.addEventListener('input', handleSearchInput);
+  if (searchInput) {
+    // Immediate search for better UX
+    searchInput.addEventListener('input', (e) => {
+      handleSearchInput(e);
+      const query = e.target.value.toLowerCase().trim();
+      if (query !== searchQuery) {
+        searchQuery = query;
+        applySortAndFilter();
+        renderItems();
+        updateItemCount();
+      }
+    });
+  }
   document.getElementById('clearSearchBtn')?.addEventListener('click', clearSearch);
   clearAllBtn?.addEventListener('click', handleClearAll);
   addManualBtn?.addEventListener('click', () => showModal('addModal'));
@@ -338,12 +349,22 @@ function loadItems() {
 // Render clipboard items
 function renderItems() {
   if (filteredItems.length === 0) {
-    clipboardList.innerHTML = `
-      <div class="empty-state">
-        <p>📋 No clipboard items found</p>
-        <p class="hint">Start copying text or add items manually!</p>
-      </div>
-    `;
+    if (searchQuery) {
+      clipboardList.innerHTML = `
+        <div class="empty-state">
+          <p>🔍 No items found for "${escapeHtml(searchQuery)}"</p>
+          <p class="hint">Try a different search term or clear the search</p>
+          <button class="btn btn-secondary" onclick="clearSearch()" style="margin-top: 10px;">Clear Search</button>
+        </div>
+      `;
+    } else {
+      clipboardList.innerHTML = `
+        <div class="empty-state">
+          <p>📋 No clipboard items found</p>
+          <p class="hint">Start copying text or add items manually!</p>
+        </div>
+      `;
+    }
     return;
   }
   
@@ -597,7 +618,8 @@ function removeTag(id, tag) {
 let searchQuery = '';
 
 function handleSearch(e) {
-  searchQuery = e.target.value.toLowerCase().trim();
+  const query = e.target.value.toLowerCase().trim();
+  searchQuery = query;
   applySortAndFilter();
   renderItems();
   updateItemCount();
@@ -641,6 +663,9 @@ function clearSearch() {
   }
 }
 
+// Make clearSearch globally accessible
+window.clearSearch = clearSearch;
+
 // Handle sort change
 function handleSortChange(e) {
   sortMode = e.target.value;
@@ -662,13 +687,19 @@ function applySortAndFilter() {
   let items = [...clipboardItems];
   
   // Apply search filter first
-  if (searchQuery) {
+  if (searchQuery && searchQuery.length > 0) {
+    const query = searchQuery.toLowerCase().trim();
     items = items.filter(item => {
-      const preview = item.preview || item.text.substring(0, 100);
-      return item.text.toLowerCase().includes(searchQuery) ||
-        item.tags?.some(tag => tag.toLowerCase().includes(searchQuery)) ||
-        item.type?.toLowerCase().includes(searchQuery) ||
-        preview.toLowerCase().includes(searchQuery);
+      if (!item) return false;
+      const text = (item.text || '').toLowerCase();
+      const preview = (item.preview || item.text?.substring(0, 100) || '').toLowerCase();
+      const type = (item.type || '').toLowerCase();
+      const tags = item.tags || [];
+      
+      return text.includes(query) ||
+        preview.includes(query) ||
+        type.includes(query) ||
+        tags.some(tag => tag.toLowerCase().includes(query));
     });
   }
   
