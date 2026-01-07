@@ -4,11 +4,15 @@
   "description": "Clipboard Manager Browser Extension",
   "scripts": {
     "icons": "node generate-icons.js",
-    "package": "npm run icons && node package-extension.js && node generate-update-manifest.js",
-    "deploy": "npm run package && git add -A && git commit -m \"Update extension package\" && git push"
+    "package": "node package-extension.js && node generate-update-manifest.js",
+    "package:full": "npm run icons && npm run package",
+    "deploy": "npm run package:full && git add -A && git commit -m \"Update extension package\" && git push",
+    "build": "npm run package"
+  },
+  "dependencies": {
+    "archiver": "^6.0.2"
   },
   "devDependencies": {
-    "archiver": "^6.0.2",
     "sharp": "^0.34.5"
   }
 }
