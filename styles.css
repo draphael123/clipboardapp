@@ -629,7 +629,7 @@ header h1 {
   font-size: 22px;
   font-weight: 800;
   font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
-  color: #ff69b4;
+  color: #ef4444;
   margin-bottom: 12px;
   text-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
@@ -1687,7 +1687,7 @@ body.dark-mode .modal-body textarea {
 
 .empty-tips h3 {
   font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
-  color: #ff69b4;
+  color: #ef4444;
   font-size: 20px;
   margin-bottom: 16px;
   text-align: center;
@@ -1996,7 +1996,7 @@ body.dark-mode .toolbar-actions select {
 
 /* Focused card */
 .clipboard-card.focused {
-  border-color: #ff69b4 !important;
+  border-color: #ef4444 !important;
   box-shadow: 
     0 0 0 4px rgba(239, 68, 68, 0.3),
     0 15px 40px rgba(59, 130, 246, 0.4),
@@ -2078,7 +2078,7 @@ body.dark-mode .toolbar-actions select {
 
 .form-group label {
   font-weight: 600;
-  color: #ff69b4;
+  color: #ef4444;
   font-size: 14px;
 }
 
@@ -2102,7 +2102,7 @@ body.dark-mode .toolbar-actions select {
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
-  border-color: #ff69b4;
+  border-color: #ef4444;
   box-shadow: 0 2px 12px rgba(59, 130, 246, 0.3) inset, 0 0 15px rgba(239, 68, 68, 0.2);
   transform: scale(1.02);
 }
@@ -2130,7 +2130,7 @@ body.dark-mode .toolbar-actions select {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #ff69b4;
+  accent-color: #ef4444;
 }
 
 .form-actions {
@@ -2148,7 +2148,7 @@ body.dark-mode .toolbar-actions select {
 }
 
 .form-footer a {
-  color: #ff69b4;
+  color: #ef4444;
   text-decoration: none;
   font-weight: 600;
 }
@@ -2180,7 +2180,7 @@ body.dark-mode .toolbar-actions select {
 }
 
 .dashboard-welcome h3 {
-  color: #ff69b4;
+  color: #ef4444;
   font-size: 24px;
   margin-bottom: 5px;
 }
@@ -2205,7 +2205,7 @@ body.dark-mode .toolbar-actions select {
 }
 
 .dashboard-section h4 {
-  color: #ff69b4;
+  color: #ef4444;
   font-size: 18px;
   margin-bottom: 15px;
   border-bottom: 2px solid rgba(59, 130, 246, 0.3);
@@ -2244,7 +2244,7 @@ body.dark-mode .toolbar-actions select {
 .setting-item input[type="checkbox"] {
   width: 20px;
   height: 20px;
-  accent-color: #ff69b4;
+  accent-color: #ef4444;
   cursor: pointer;
 }
 
@@ -2280,7 +2280,7 @@ body.dark-mode .toolbar-actions select {
 .stat-value {
   font-size: 24px;
   font-weight: bold;
-  color: #ff69b4;
+  color: #ef4444;
 }
 
 .dashboard-actions {
@@ -2308,7 +2308,7 @@ body.dark-mode .toolbar-actions select {
 
 .contact-content h2 {
   text-align: center;
-  color: #ff69b4;
+  color: #ef4444;
   font-size: 32px;
   margin-bottom: 15px;
   text-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
