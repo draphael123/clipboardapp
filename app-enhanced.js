@@ -80,23 +80,31 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error('Error parsing sync data:', error);
       showToast('❌ Error syncing data: ' + error.message, 'error');
     }
-  } else if (syncParam === 'true') {
+  } else if (syncParam === 'true' || syncParam === 'pending') {
     // Wait for sync data from extension
-    showToast('🔄 Waiting for sync data...', 'info');
+    const itemCountParam = urlParams.get('count');
+    showToast(`🔄 Syncing${itemCountParam ? ` ${itemCountParam} items` : ''}... Please wait`, 'info');
     
-    // Listen for sync data message
+    // Listen for sync data message from content script
+    let syncReceived = false;
     window.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'CLIPBOARD_MANAGER_SYNC_DATA') {
+      if (event.data && event.data.type === 'CLIPBOARD_MANAGER_SYNC_DATA' && !syncReceived) {
+        syncReceived = true;
+        console.log('[Website] Received sync data:', event.data.data?.length, 'items');
         try {
           const data = event.data.data;
-          clipboardItems = data.map(item => enhanceItem(item));
-          filteredItems = clipboardItems;
-          applySortAndFilter();
-          updateStats();
-          saveToStorage();
-          renderItems();
-          showToast(`✨ Successfully synced ${data.length} items from extension! 💖`, 'success');
-          window.history.replaceState({}, document.title, window.location.pathname);
+          if (data && data.length > 0) {
+            clipboardItems = data.map(item => enhanceItem(item));
+            filteredItems = clipboardItems;
+            applySortAndFilter();
+            updateStats();
+            saveToStorage();
+            renderItems();
+            showToast(`✨ Successfully synced ${data.length} items from extension! 🐹`, 'success');
+            window.history.replaceState({}, document.title, window.location.pathname);
+          } else {
+            showToast('💡 No items to sync from extension', 'info');
+          }
         } catch (error) {
           console.error('Error processing sync data:', error);
           showToast('❌ Error processing sync data: ' + error.message, 'error');
@@ -104,14 +112,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
+    // Request sync data from extension via content script
+    console.log('[Website] Requesting sync data from extension...');
+    window.postMessage({ type: 'CLIPBOARD_MANAGER_REQUEST_SYNC' }, '*');
+    
+    // Retry request after a short delay
+    setTimeout(() => {
+      if (!syncReceived) {
+        console.log('[Website] Retrying sync request...');
+        window.postMessage({ type: 'CLIPBOARD_MANAGER_REQUEST_SYNC' }, '*');
+      }
+    }, 1000);
+    
     // Also check chrome.storage for sync data (for large datasets)
     setTimeout(() => {
-      if (typeof chrome !== 'undefined' && chrome.storage) {
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
         chrome.storage.local.get(['syncData', 'syncTimestamp'], (result) => {
           if (result.syncData && result.syncTimestamp) {
-            // Only use if timestamp is recent (within last 30 seconds)
+            // Only use if timestamp is recent (within last 60 seconds)
             const age = Date.now() - result.syncTimestamp;
-            if (age < 30000) {
+            if (age < 60000) {
               try {
                 const data = result.syncData;
                 clipboardItems = data.map(item => enhanceItem(item));

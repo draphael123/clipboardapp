@@ -1094,48 +1094,77 @@ function handleClearAll() {
 function handleSync() {
   showToast('🔄 Syncing to website...', 'info');
   
+  // Get items directly from our local state first as backup
+  const localItems = clipboardItems || [];
+  
   chrome.runtime.sendMessage({ action: 'exportData' }, (response) => {
     if (chrome.runtime.lastError) {
       console.error('Sync error:', chrome.runtime.lastError);
-      showToast('❌ Error syncing: ' + chrome.runtime.lastError.message, 'error');
+      // Try using local items instead
+      if (localItems.length > 0) {
+        openSyncPage(localItems);
+      } else {
+        showToast('❌ Error syncing: ' + chrome.runtime.lastError.message, 'error');
+      }
       return;
     }
     
-    if (response && response.data) {
-      try {
-        const data = response.data;
-        const dataString = JSON.stringify(data);
-        const itemCount = data.length;
-        
-        // Check if data is too large for URL (Chrome has ~2MB URL limit, but we'll use 1.5MB to be safe)
-        if (dataString.length > 1500000) {
-          // Data too large - use alternative method
-          showToast('📦 Data too large, using alternative sync method...', 'info');
-          
-          // Store in chrome.storage and open website
-          chrome.storage.local.set({ syncData: data, syncTimestamp: Date.now() }, () => {
-            chrome.tabs.create({ 
-              url: `https://clipboardapp.vercel.app/?sync=true` 
-            }, (tab) => {
-              showToast(`✨ Opening website with ${itemCount} items! 💖`, 'success');
-            });
-          });
-        } else {
-          // Normal sync via URL
-          const encodedData = encodeURIComponent(dataString);
-          chrome.tabs.create({ 
-            url: `https://clipboardapp.vercel.app/?data=${encodedData}` 
-          });
-          showToast(`✨ Synced ${itemCount} items to website! 💖`, 'success');
-        }
-      } catch (error) {
-        console.error('Sync error:', error);
-        showToast('❌ Error preparing sync data: ' + error.message, 'error');
-      }
+    const data = (response && response.data) ? response.data : localItems;
+    
+    if (data && data.length > 0) {
+      openSyncPage(data);
     } else {
       showToast('💡 No data to sync - clipboard is empty', 'info');
     }
   });
+}
+
+function openSyncPage(data) {
+  try {
+    const dataString = JSON.stringify(data);
+    const itemCount = data.length;
+    
+    // Check if data is too large for URL (use 100KB limit to be safe)
+    if (dataString.length > 100000) {
+      // Data too large - store in chrome.storage and use sync flag
+      showToast('📦 Preparing large dataset...', 'info');
+      
+      chrome.storage.local.set({ syncData: data, syncTimestamp: Date.now() }, () => {
+        if (chrome.runtime.lastError) {
+          console.error('Storage error:', chrome.runtime.lastError);
+          showToast('❌ Error storing data', 'error');
+          return;
+        }
+        
+        chrome.tabs.create({ 
+          url: `https://clipboardapp.vercel.app/?sync=pending&count=${itemCount}` 
+        }, (tab) => {
+          if (chrome.runtime.lastError) {
+            console.error('Tab create error:', chrome.runtime.lastError);
+            // Fallback: just open the website
+            window.open('https://clipboardapp.vercel.app/?sync=pending', '_blank');
+          }
+          showToast(`✨ Opening website with ${itemCount} items! 🐹`, 'success');
+        });
+      });
+    } else {
+      // Normal sync via URL - encode data
+      const encodedData = encodeURIComponent(dataString);
+      const syncUrl = `https://clipboardapp.vercel.app/?data=${encodedData}`;
+      
+      chrome.tabs.create({ url: syncUrl }, (tab) => {
+        if (chrome.runtime.lastError) {
+          console.error('Tab create error:', chrome.runtime.lastError);
+          // Fallback: use window.open
+          window.open(syncUrl, '_blank');
+        }
+        showToast(`✨ Synced ${itemCount} items to website! 🐹`, 'success');
+      });
+    }
+  } catch (error) {
+    console.error('Sync error:', error);
+    showToast('❌ Error preparing sync data: ' + error.message, 'error');
+  }
 }
 
 // Update item count

@@ -207,26 +207,44 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 // Listen for sync requests from website
 window.addEventListener('message', (event) => {
-  // Only accept messages from the same origin or clipboard manager website
-  if (event.data && event.data.type === 'CLIPBOARD_MANAGER_SYNC_REQUEST' && 
-      event.data.source === 'clipboard-manager-web') {
-    // Request data from background script
-    chrome.runtime.sendMessage({ action: 'exportData' }, (response) => {
-      if (response && response.data) {
-        // Send data back to website
-        window.postMessage({
-          type: 'CLIPBOARD_MANAGER_SYNC_RESPONSE',
-          source: 'clipboard-manager-extension',
-          data: response.data
-        }, '*');
+  // Handle sync request from website (any request type)
+  if (event.data && (event.data.type === 'CLIPBOARD_MANAGER_SYNC_REQUEST' || 
+      event.data.type === 'CLIPBOARD_MANAGER_REQUEST_SYNC')) {
+    console.log('[Clipboard Manager] Sync request received from website');
+    
+    // First check if we have sync data in storage (from large dataset sync)
+    chrome.storage.local.get(['syncData', 'syncTimestamp'], (result) => {
+      if (result.syncData && result.syncTimestamp) {
+        const age = Date.now() - result.syncTimestamp;
+        if (age < 60000) { // Within last 60 seconds
+          console.log('[Clipboard Manager] Using stored sync data:', result.syncData.length, 'items');
+          window.postMessage({
+            type: 'CLIPBOARD_MANAGER_SYNC_DATA',
+            source: 'clipboard-manager-extension',
+            data: result.syncData
+          }, '*');
+          // Clear the sync data after use
+          chrome.storage.local.remove(['syncData', 'syncTimestamp']);
+          return;
+        }
       }
+      
+      // Otherwise, request fresh data from background script
+      chrome.runtime.sendMessage({ action: 'exportData' }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('[Clipboard Manager] Error getting data:', chrome.runtime.lastError);
+          return;
+        }
+        if (response && response.data) {
+          console.log('[Clipboard Manager] Sending data to website:', response.data.length, 'items');
+          window.postMessage({
+            type: 'CLIPBOARD_MANAGER_SYNC_DATA',
+            source: 'clipboard-manager-extension',
+            data: response.data
+          }, '*');
+        }
+      });
     });
-  }
-  
-  // Handle sync data message from extension popup
-  if (event.data && event.data.type === 'CLIPBOARD_MANAGER_SYNC_DATA') {
-    // Forward to page
-    window.postMessage(event.data, '*');
   }
 });
 
