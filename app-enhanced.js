@@ -755,7 +755,6 @@ function hideTooltip() {
     tooltipElement = null;
   }
 }
-}
 
 // Setup card event listeners
 function setupCardEventListeners() {
@@ -894,7 +893,8 @@ function updateBulkActionsBar() {
   
   if (selectedItems.size > 0) {
     bulkActionsBar.classList.add('show');
-    document.getElementById('selectedCount')?.textContent = selectedItems.size;
+    const countEl = document.getElementById('selectedCount');
+    if (countEl) countEl.textContent = selectedItems.size;
   } else {
     bulkActionsBar.classList.remove('show');
   }
