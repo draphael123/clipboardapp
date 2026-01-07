@@ -1207,7 +1207,7 @@ body.dark-mode .use-case p {
 }
 
 .card-action.delete:hover {
-  background: #ffeaea;
+  background: #fef2f2;
 }
 
 /* Modal Styles */
@@ -1559,7 +1559,7 @@ body.dark-mode .modal-body textarea {
 }
 
 .clipboard-card.favorite {
-  border-left: 4px solid #ffd700;
+  border-left: 4px solid #fbbf24;
 }
 
 .clipboard-card.dragging {
