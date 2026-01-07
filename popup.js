@@ -65,6 +65,262 @@ function initVisualEffects() {
       }
     }
   });
+  
+  // Add floating particles
+  createFloatingParticles();
+  
+  // Add hamster interaction
+  const hamster = document.querySelector('.cute-animal');
+  if (hamster) {
+    hamster.addEventListener('click', () => {
+      createConfetti(hamster.getBoundingClientRect());
+      hamster.style.animation = 'hamsterSpin 0.6s ease-out';
+      setTimeout(() => {
+        hamster.style.animation = 'kawaiiBounce 2.5s ease-in-out infinite';
+      }, 600);
+    });
+  }
+  
+  // Add dynamic styles
+  injectExcitingStyles();
+}
+
+// Create floating particles in background
+function createFloatingParticles() {
+  const container = document.querySelector('.container');
+  if (!container) return;
+  
+  const particleContainer = document.createElement('div');
+  particleContainer.className = 'particle-container';
+  particleContainer.style.cssText = `
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  `;
+  container.insertBefore(particleContainer, container.firstChild);
+  
+  const particles = ['💙', '❤️', '✨', '⭐', '🐹'];
+  
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      createParticle(particleContainer, particles);
+    }, i * 500);
+  }
+  
+  // Continuously create particles
+  setInterval(() => {
+    if (particleContainer.children.length < 12) {
+      createParticle(particleContainer, particles);
+    }
+  }, 2000);
+}
+
+function createParticle(container, particles) {
+  const particle = document.createElement('div');
+  particle.textContent = particles[Math.floor(Math.random() * particles.length)];
+  particle.style.cssText = `
+    position: absolute;
+    left: ${Math.random() * 100}%;
+    bottom: -30px;
+    font-size: ${12 + Math.random() * 10}px;
+    opacity: 0.4;
+    animation: floatUp ${8 + Math.random() * 6}s ease-in-out forwards;
+    pointer-events: none;
+  `;
+  container.appendChild(particle);
+  
+  setTimeout(() => particle.remove(), 14000);
+}
+
+// Create confetti effect
+function createConfetti(rect) {
+  const colors = ['#3b82f6', '#ef4444', '#ffd700', '#ff69b4', '#00ff88'];
+  const emojis = ['🎉', '✨', '💙', '❤️', '⭐', '🐹', '💫'];
+  
+  for (let i = 0; i < 20; i++) {
+    setTimeout(() => {
+      const confetti = document.createElement('div');
+      const isEmoji = Math.random() > 0.5;
+      
+      if (isEmoji) {
+        confetti.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        confetti.style.fontSize = '16px';
+      } else {
+        confetti.style.width = '8px';
+        confetti.style.height = '8px';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      }
+      
+      confetti.style.cssText += `
+        position: fixed;
+        left: ${rect.left + rect.width / 2}px;
+        top: ${rect.top + rect.height / 2}px;
+        pointer-events: none;
+        z-index: 10000;
+        animation: confettiFall ${1 + Math.random()}s ease-out forwards;
+        --angle: ${-180 + Math.random() * 360}deg;
+        --distance: ${50 + Math.random() * 100}px;
+      `;
+      
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 2000);
+    }, i * 30);
+  }
+}
+
+// Create copy celebration effect
+function createCopyCelebration(element) {
+  const rect = element.getBoundingClientRect();
+  
+  // Flash effect
+  element.style.animation = 'copyFlash 0.3s ease-out';
+  setTimeout(() => {
+    element.style.animation = '';
+  }, 300);
+  
+  // Burst particles
+  const bursts = ['📋', '✅', '💙', '✨'];
+  for (let i = 0; i < 6; i++) {
+    const burst = document.createElement('div');
+    burst.textContent = bursts[i % bursts.length];
+    burst.style.cssText = `
+      position: fixed;
+      left: ${rect.left + rect.width / 2}px;
+      top: ${rect.top + rect.height / 2}px;
+      font-size: 18px;
+      pointer-events: none;
+      z-index: 10000;
+      animation: burstOut 0.6s ease-out forwards;
+      --angle: ${(360 / 6) * i}deg;
+    `;
+    document.body.appendChild(burst);
+    setTimeout(() => burst.remove(), 600);
+  }
+}
+
+// Inject exciting dynamic styles
+function injectExcitingStyles() {
+  if (document.getElementById('exciting-styles')) return;
+  
+  const style = document.createElement('style');
+  style.id = 'exciting-styles';
+  style.textContent = `
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.5;
+      }
+      90% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(-650px) rotate(360deg) scale(0.5);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes confettiFall {
+      0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(
+          calc(cos(var(--angle)) * var(--distance)),
+          calc(sin(var(--angle)) * var(--distance) + 100px)
+        ) rotate(720deg) scale(0);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes burstOut {
+      0% {
+        transform: translate(0, 0) scale(0);
+        opacity: 1;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        transform: translate(
+          calc(cos(var(--angle)) * 60px),
+          calc(sin(var(--angle)) * 60px)
+        ) scale(1.2);
+        opacity: 0;
+      }
+    }
+    
+    @keyframes copyFlash {
+      0% {
+        filter: brightness(1);
+        box-shadow: 0 0 0 rgba(59, 130, 246, 0);
+      }
+      50% {
+        filter: brightness(1.3);
+        box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), 0 0 60px rgba(239, 68, 68, 0.4);
+      }
+      100% {
+        filter: brightness(1);
+        box-shadow: 0 0 0 rgba(59, 130, 246, 0);
+      }
+    }
+    
+    @keyframes hamsterSpin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.3); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+    
+    @keyframes rainbowBorder {
+      0% { border-color: #3b82f6; }
+      25% { border-color: #ef4444; }
+      50% { border-color: #ffd700; }
+      75% { border-color: #00ff88; }
+      100% { border-color: #3b82f6; }
+    }
+    
+    .clipboard-item:hover {
+      animation: rainbowBorder 2s linear infinite !important;
+    }
+    
+    .btn-small:active, .btn-icon:active {
+      transform: scale(0.9) !important;
+    }
+    
+    /* Exciting glow on search focus */
+    .search-bar input:focus {
+      animation: searchGlow 1.5s ease-in-out infinite !important;
+    }
+    
+    @keyframes searchGlow {
+      0%, 100% {
+        box-shadow: 0 0 10px rgba(59, 130, 246, 0.3), 0 0 20px rgba(239, 68, 68, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5), 0 0 40px rgba(239, 68, 68, 0.4);
+      }
+    }
+    
+    /* Pulse effect for stats */
+    #itemCount {
+      animation: statsPulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes statsPulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+  `;
+  document.head.appendChild(style);
 }
 
 // Create sparkle effect
@@ -531,9 +787,11 @@ function copyItem(id) {
       const itemEl = document.querySelector(`[data-id="${id}"]`);
       if (itemEl) {
         itemEl.classList.add('selected');
+        // Add celebration effect!
+        createCopyCelebration(itemEl);
         setTimeout(() => itemEl.classList.remove('selected'), 500);
       }
-      showToast('Copied to clipboard!', 'success');
+      showToast('✨ Copied to clipboard! 🐹', 'success');
       loadItems();
     }
   });
