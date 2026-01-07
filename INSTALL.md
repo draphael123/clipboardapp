@@ -68,3 +68,4 @@ Just navigate to `[browser]://extensions/` and follow the same steps.
 - Open an issue on GitHub: https://github.com/draphael123/clipboardapp/issues
 
 
+

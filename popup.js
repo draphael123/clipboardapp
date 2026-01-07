@@ -290,6 +290,7 @@ function enhanceItem(item) {
   if (!item.type) item.type = detectItemType(item.text);
   if (!item.wordCount) item.wordCount = countWords(item.text);
   if (!item.charCount) item.charCount = item.text.length;
+  if (!item.preview) item.preview = item.text ? item.text.substring(0, 100) : '';
   return item;
 }
 
@@ -361,7 +362,7 @@ function renderItems() {
             ${item.isFavorite ? '⭐' : '☆'}
           </button>
         </div>
-        <div class="item-preview">${searchQuery ? highlightSearchMatch(item.preview, searchQuery) : escapeHtml(item.preview)}${item.text.length > 100 ? '...' : ''}</div>
+        <div class="item-preview">${searchQuery ? highlightSearchMatch(item.preview || item.text.substring(0, 100), searchQuery) : escapeHtml(item.preview || item.text.substring(0, 100))}${item.text.length > 100 ? '...' : ''}</div>
         ${item.tags && item.tags.length > 0 ? `<div class="item-tags-mini">${item.tags.slice(0, 2).map(tag => `<span class="tag-mini">${escapeHtml(tag)}</span>`).join('')}</div>` : ''}
         <div class="item-meta">
           <div class="item-info">
@@ -662,12 +663,13 @@ function applySortAndFilter() {
   
   // Apply search filter first
   if (searchQuery) {
-    items = items.filter(item => 
-      item.text.toLowerCase().includes(searchQuery) ||
-      item.tags?.some(tag => tag.toLowerCase().includes(searchQuery)) ||
-      item.type?.toLowerCase().includes(searchQuery) ||
-      item.preview?.toLowerCase().includes(searchQuery)
-    );
+    items = items.filter(item => {
+      const preview = item.preview || item.text.substring(0, 100);
+      return item.text.toLowerCase().includes(searchQuery) ||
+        item.tags?.some(tag => tag.toLowerCase().includes(searchQuery)) ||
+        item.type?.toLowerCase().includes(searchQuery) ||
+        preview.toLowerCase().includes(searchQuery);
+    });
   }
   
   // Apply type filters

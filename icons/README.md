@@ -10,3 +10,4 @@ You can create these icons using any image editor or online icon generator. The 
 For now, the extension will work without icons, but they will appear as default browser icons.
 
 
+

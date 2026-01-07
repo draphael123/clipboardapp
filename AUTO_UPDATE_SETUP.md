@@ -100,3 +100,4 @@ If you're still using "Load unpacked", you won't get auto-updates. You need to:
 - **Rollback**: If needed, you can install an older version by downloading a previous release
 
 
+

@@ -4,30 +4,30 @@
   box-sizing: border-box;
 }
 
-body {
-  font-family: 'Comic Sans MS', 'Segoe UI Emoji', 'Apple Color Emoji', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background: linear-gradient(135deg, #ffb3d9 0%, #ffcce5 25%, #e6b3ff 50%, #c299ff 75%, #b3d9ff 100%);
-  background-size: 400% 400%;
-  animation: kawaiiGradient 60s ease infinite;
-  min-height: 100vh;
-  color: #333;
-  position: relative;
-  overflow-x: hidden;
-}
-
-@keyframes kawaiiGradient {
-  0% {
+/* Subtle background animation - very slow and gentle */
+@keyframes gentleGradient {
+  0%, 100% {
     background-position: 0% 50%;
   }
   50% {
     background-position: 100% 50%;
   }
-  100% {
-    background-position: 0% 50%;
-  }
 }
 
-/* Animated background particles */
+body {
+  font-family: 'Comic Sans MS', 'Segoe UI Emoji', 'Apple Color Emoji', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: linear-gradient(135deg, #ffb3d9 0%, #ffcce5 25%, #e6b3ff 50%, #c299ff 75%, #b3d9ff 100%);
+  background-size: 400% 400%;
+  background-position: 0% 50%;
+  min-height: 100vh;
+  color: #333;
+  position: relative;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  animation: gentleGradient 120s ease-in-out infinite;
+}
+
+/* Static background particles */
 body::before {
   content: '';
   position: fixed;
@@ -36,17 +36,16 @@ body::before {
   width: 100%;
   height: 100%;
   background: 
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
-  animation: float 40s ease-in-out infinite;
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.04) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
 }
 
-/* Kawaii floating sparkles and hearts - REDUCED */
+/* Static background emojis - minimal */
 body::after {
-  content: '✨ 💖 🌸 🎀 💕 ⭐ 💫 🌈 🦄 🍓 💜 💝 🌺 🎁 💗 🎈 🦋 🌻 🍰 🎪 🎨 🎭 🎯 🎲 🎸 🎹 🐹 🐰 🐱 🐶 🦊 🐼 🐨 🦁 🐯 🦄 🦋 🦉 🐸 🐷 🐮 🐰 🌸 🌺 🌻 🌷 🌹 🌼 🌿 🍀 🍄 🌈 ⭐ 💫 ✨ 💖 💕 💗 💝 💜 💙 💚 💛 🧡 ❤️ 🎀 🎁 🎂 🍰 🍭 🍬 🍫 🍪 🥨 🍩 🍰 🎂';
+  content: '';
   position: fixed;
   top: 0;
   left: 0;
@@ -54,14 +53,8 @@ body::after {
   height: 100%;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.15;
-  font-size: 40px;
-  animation: float-emojis 30s ease-in-out infinite;
+  opacity: 0.05;
   background: none;
-  text-shadow: 
-    0 0 20px rgba(255, 182, 193, 0.5),
-    0 0 35px rgba(255, 192, 203, 0.3);
-  filter: blur(0.5px);
 }
 
 @keyframes emoji-rain {
@@ -119,31 +112,25 @@ header {
   text-align: center;
   position: relative;
   overflow: hidden;
-  animation: slideDown 0.6s ease-out;
   border: 4px solid rgba(255, 192, 203, 0.4);
+  animation: slideDown 0.6s ease-out;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+header:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 25px 70px rgba(255, 182, 193, 0.4),
+    0 0 0 3px rgba(255, 192, 203, 0.4) inset,
+    0 0 50px rgba(255, 182, 193, 0.3);
 }
 
 header::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  animation: shine 8s infinite;
+  display: none;
 }
 
 header::after {
-  content: '✨💖🌸🎀💕⭐💫🌈🦄🍓💜💝🌺🎁💗';
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 14px;
-  opacity: 0.3;
-  animation: sparkle-rotate 8s ease-in-out infinite;
-  pointer-events: none;
-  filter: drop-shadow(0 0 8px rgba(255, 182, 193, 0.4));
+  display: none;
 }
 
 @keyframes rainbow-shine {
@@ -187,41 +174,34 @@ header::after {
 
 .cute-hamster-mascot {
   font-size: 100px;
-  animation: kawaiiBounce 4s ease-in-out infinite;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   filter: drop-shadow(0 10px 20px rgba(255, 182, 193, 0.5)) drop-shadow(0 0 30px rgba(255, 192, 203, 0.7)) drop-shadow(0 0 50px rgba(255, 105, 180, 0.4));
   line-height: 1;
   position: relative;
   text-shadow: 0 0 30px rgba(255, 182, 193, 0.8);
+  display: inline-block;
 }
 
-@keyframes hamster-wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-5deg); }
-  75% { transform: rotate(5deg); }
+.cute-hamster-mascot:hover {
+  transform: scale(1.15) rotate(5deg);
+  filter: drop-shadow(0 15px 30px rgba(255, 182, 193, 0.6)) drop-shadow(0 0 40px rgba(255, 192, 203, 0.8)) drop-shadow(0 0 60px rgba(255, 105, 180, 0.5));
+  animation: hamsterWiggle 0.5s ease-in-out;
+}
+
+@keyframes hamsterWiggle {
+  0%, 100% { transform: scale(1.15) rotate(5deg); }
+  25% { transform: scale(1.15) rotate(-5deg); }
+  50% { transform: scale(1.15) rotate(5deg); }
+  75% { transform: scale(1.15) rotate(-3deg); }
 }
 
 .cute-hamster-mascot::before {
-  content: '✨💫⭐';
-  position: absolute;
-  top: -30px;
-  left: -30px;
-  font-size: 35px;
-  animation: sparkle 3s ease-in-out infinite;
-  opacity: 0.7;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 0, 0.6));
+  display: none;
 }
 
 .cute-hamster-mascot::after {
-  content: '💖🌸🎀';
-  position: absolute;
-  top: -25px;
-  right: -25px;
-  font-size: 30px;
-  animation: sparkle 3.5s ease-in-out infinite 0.5s;
-  opacity: 0.7;
-  filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
+  display: none;
 }
 
 @keyframes float-around {
@@ -231,11 +211,6 @@ header::after {
   75% { transform: translate(-10px, 10px) rotate(270deg); }
 }
 
-.cute-hamster-mascot:hover {
-  transform: scale(1.3) rotate(15deg);
-  animation: none;
-  filter: drop-shadow(0 12px 24px rgba(255, 182, 193, 0.6)) drop-shadow(0 0 30px rgba(255, 192, 203, 0.8));
-}
 
 @keyframes kawaiiBounce {
   0%, 100% {
@@ -268,8 +243,8 @@ header h1 {
   margin-bottom: 10px;
   position: relative;
   z-index: 1;
-  animation: kawaiiGradientText 4s ease infinite, title-bounce 3s ease-in-out infinite;
   background-size: 300% 300%;
+  background-position: 0% 50%;
   text-shadow: 0 0 40px rgba(255, 182, 193, 0.4);
   filter: drop-shadow(0 4px 8px rgba(255, 192, 203, 0.4)) drop-shadow(0 0 20px rgba(255, 105, 180, 0.3));
   letter-spacing: 2px;
@@ -304,7 +279,6 @@ header h1 {
 .subtitle {
   color: #ff69b4;
   font-size: 20px;
-  animation: fadeInUp 0.8s ease-out 0.2s both;
   font-weight: 600;
   text-shadow: 
     0 0 10px rgba(255, 182, 193, 0.5),
@@ -330,6 +304,7 @@ header h1 {
   padding: 20px 40px;
   background: linear-gradient(135deg, #ff69b4 0%, #ff1493 25%, #ff69b4 50%, #ffb6c1 75%, #ff69b4 100%);
   background-size: 300% 300%;
+  background-position: 0% 50%;
   color: white;
   text-decoration: none;
   border-radius: 50px;
@@ -344,7 +319,24 @@ header h1 {
   border: 3px solid rgba(255, 255, 255, 0.5);
   position: relative;
   overflow: hidden;
-  animation: button-glow 4s ease-in-out infinite;
+}
+
+.btn-download::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.btn-download:hover::before {
+  width: 400px;
+  height: 400px;
 }
 
 @keyframes button-glow {
@@ -387,15 +379,18 @@ header h1 {
 }
 
 .btn-download:hover {
-  transform: translateY(-10px) scale(1.15) rotate(2deg);
-  box-shadow: 
-    0 25px 60px rgba(255, 105, 180, 0.7),
-    0 0 0 8px rgba(255, 192, 203, 0.6) inset,
-    0 0 60px rgba(255, 182, 193, 0.7),
-    0 0 100px rgba(255, 105, 180, 0.4);
+  transform: translateY(-8px) scale(1.08);
   background-position: 100% 50%;
-  animation: kawaiiWiggle 0.6s ease, button-burst 0.8s ease;
+  box-shadow: 
+    0 20px 50px rgba(255, 105, 180, 0.7),
+    0 0 0 8px rgba(255, 192, 203, 0.6) inset,
+    0 0 50px rgba(255, 182, 193, 0.7),
+    0 0 100px rgba(255, 105, 180, 0.4);
   border-color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-download:active {
+  transform: translateY(-4px) scale(1.05);
 }
 
 @keyframes button-burst {
@@ -405,8 +400,7 @@ header h1 {
 }
 
 .btn-download:hover::after {
-  opacity: 0.8;
-  animation: sparkle 1s ease-in-out infinite;
+  opacity: 0.6;
 }
 
 @keyframes kawaiiWiggle {
@@ -446,7 +440,6 @@ header h1 {
 /* Benefits Section */
 .benefits-section {
   margin-bottom: 30px;
-  animation: fadeInUp 0.8s ease-out 0.4s both;
 }
 
 .benefits-content {
@@ -506,8 +499,28 @@ header h1 {
     0 10px 30px rgba(255, 182, 193, 0.2),
     0 0 0 2px rgba(255, 192, 203, 0.2) inset,
     0 0 20px rgba(255, 182, 193, 0.1);
-  animation: none;
+  animation: cardFadeIn 0.6s ease-out backwards;
 }
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.benefit-card:nth-child(1) { animation-delay: 0.1s; }
+.benefit-card:nth-child(2) { animation-delay: 0.2s; }
+.benefit-card:nth-child(3) { animation-delay: 0.3s; }
+.benefit-card:nth-child(4) { animation-delay: 0.4s; }
+.benefit-card:nth-child(5) { animation-delay: 0.5s; }
+.benefit-card:nth-child(6) { animation-delay: 0.6s; }
+.benefit-card:nth-child(7) { animation-delay: 0.7s; }
+.benefit-card:nth-child(8) { animation-delay: 0.8s; }
 
 @keyframes card-float {
   0%, 100% { transform: translateY(0px); }
@@ -530,15 +543,29 @@ header h1 {
 }
 
 .benefit-card:hover {
-  transform: translateY(-15px) scale(1.08) rotate(1deg);
+  transform: translateY(-12px) scale(1.03);
   border-color: #ff69b4;
   box-shadow: 
-    0 25px 60px rgba(255, 182, 193, 0.5),
+    0 20px 50px rgba(255, 182, 193, 0.5),
     0 0 0 5px rgba(255, 192, 203, 0.4) inset,
     0 0 50px rgba(255, 182, 193, 0.4),
     0 0 80px rgba(255, 105, 180, 0.2);
   background: linear-gradient(135deg, rgba(255, 245, 250, 1) 0%, rgba(255, 235, 250, 1) 50%, rgba(245, 245, 255, 1) 100%);
-  animation: card-bounce 0.6s ease;
+}
+
+.benefit-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+}
+
+.benefit-card:hover::before {
+  left: 100%;
 }
 
 @keyframes card-bounce {
@@ -547,8 +574,7 @@ header h1 {
 }
 
 .benefit-card:hover .benefit-icon {
-  animation: bounce-icon 0.6s ease;
-  transform: scale(1.2);
+  transform: scale(1.1);
 }
 
 @keyframes bounce-icon {
@@ -564,11 +590,15 @@ header h1 {
   font-size: 80px;
   margin-bottom: 20px;
   filter: drop-shadow(0 8px 16px rgba(255, 182, 193, 0.5)) drop-shadow(0 0 20px rgba(255, 192, 203, 0.6)) drop-shadow(0 0 35px rgba(255, 105, 180, 0.4));
-  animation: kawaiiFloat 6s ease-in-out infinite;
   display: inline-block;
   position: relative;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   text-shadow: 0 0 20px rgba(255, 182, 193, 0.6);
+}
+
+.benefit-card:hover .benefit-icon {
+  transform: scale(1.15) rotate(5deg);
+  filter: drop-shadow(0 12px 24px rgba(255, 182, 193, 0.7)) drop-shadow(0 0 30px rgba(255, 192, 203, 0.8)) drop-shadow(0 0 45px rgba(255, 105, 180, 0.5));
 }
 
 @keyframes icon-spin {
@@ -583,13 +613,7 @@ header h1 {
 }
 
 .benefit-icon::before {
-  content: '✨';
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  font-size: 20px;
-  animation: sparkle 2s ease-in-out infinite;
-  opacity: 0.7;
+  display: none;
 }
 
 @keyframes kawaiiFloat {
@@ -608,12 +632,6 @@ header h1 {
   color: #ff69b4;
   margin-bottom: 12px;
   text-shadow: 0 2px 4px rgba(255, 182, 193, 0.3);
-  animation: title-pulse 4s ease-in-out infinite;
-}
-
-@keyframes title-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
 }
 
 .benefit-card p {
@@ -652,12 +670,16 @@ header h1 {
   border-radius: 8px;
   font-size: 14px;
   color: #555;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  border-left: 3px solid transparent;
 }
 
 .feature-item:hover {
   background: rgba(255, 255, 255, 1);
-  transform: translateX(4px);
+  transform: translateX(8px) scale(1.02);
+  border-left-color: #667eea;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
 }
 
 .feature-item strong {
@@ -687,13 +709,32 @@ header h1 {
   border: 2px solid rgba(102, 126, 234, 0.1);
   border-radius: 12px;
   padding: 24px;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.use-case::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.use-case:hover::before {
+  left: 100%;
 }
 
 .use-case:hover {
   border-color: #667eea;
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(240, 244, 255, 0.9) 100%);
 }
 
 .use-case strong {
@@ -808,13 +849,22 @@ body.dark-mode .use-case p {
   border-radius: 10px;
   font-size: 16px;
   outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .search-container input:focus {
   border-color: #667eea;
-  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-  transform: scale(1.01);
+  box-shadow: 
+    0 0 0 4px rgba(102, 126, 234, 0.1),
+    0 4px 20px rgba(102, 126, 234, 0.15);
+  transform: scale(1.02) translateY(-2px);
+  background: rgba(255, 255, 255, 1);
+}
+
+.search-container input:hover:not(:focus) {
+  border-color: #ff69b4;
+  box-shadow: 0 2px 10px rgba(255, 105, 180, 0.1);
 }
 
 .search-icon {
@@ -824,6 +874,13 @@ body.dark-mode .use-case p {
   transform: translateY(-50%);
   color: #999;
   font-size: 20px;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.search-container input:focus ~ .search-icon {
+  color: #667eea;
+  transform: translateY(-50%) scale(1.2) rotate(15deg);
 }
 
 .toolbar-actions {
@@ -873,24 +930,12 @@ body.dark-mode .use-case p {
   font-family: 'Comic Sans MS', 'Segoe UI Emoji', sans-serif;
   font-weight: 700;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  animation: button-shimmer 3s ease-in-out infinite;
-}
-
-@keyframes button-shimmer {
-  0%, 100% { box-shadow: 0 4px 15px rgba(255, 105, 180, 0.4), 0 0 20px rgba(255, 182, 193, 0.3); }
-  50% { box-shadow: 0 6px 20px rgba(255, 105, 180, 0.6), 0 0 30px rgba(255, 182, 193, 0.5), 0 0 40px rgba(255, 105, 180, 0.3); }
 }
 
 .btn-primary:hover {
   background: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #ffb6c1 100%);
-  transform: translateY(-5px) scale(1.05) rotate(2deg);
-  box-shadow: 0 10px 30px rgba(255, 105, 180, 0.6), 0 0 40px rgba(255, 182, 193, 0.5), 0 0 60px rgba(255, 105, 180, 0.4);
-  animation: button-bounce 0.5s ease;
-}
-
-@keyframes button-bounce {
-  0%, 100% { transform: translateY(-5px) scale(1.05) rotate(2deg); }
-  50% { transform: translateY(-8px) scale(1.08) rotate(-2deg); }
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(255, 105, 180, 0.5), 0 0 35px rgba(255, 182, 193, 0.4), 0 0 50px rgba(255, 105, 180, 0.3);
 }
 
 .btn-secondary {
@@ -902,11 +947,19 @@ body.dark-mode .use-case p {
   box-shadow: 0 2px 8px rgba(255, 182, 193, 0.3);
 }
 
+.btn-secondary {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .btn-secondary:hover {
   background: linear-gradient(135deg, rgba(255, 245, 250, 1) 0%, rgba(255, 235, 250, 1) 100%);
-  transform: translateY(-3px) scale(1.03) rotate(1deg);
-  box-shadow: 0 6px 15px rgba(255, 182, 193, 0.5), 0 0 20px rgba(255, 192, 203, 0.4);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(255, 182, 193, 0.5), 0 0 25px rgba(255, 192, 203, 0.4);
   border-color: #ff69b4;
+}
+
+.btn-secondary:active {
+  transform: translateY(-2px) scale(1.01);
 }
 
 .btn-danger {
@@ -954,7 +1007,13 @@ body.dark-mode .use-case p {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  animation: fadeIn 0.6s ease-out;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.stat:hover .stat-value {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.3));
 }
 
 @keyframes fadeIn {
@@ -979,33 +1038,21 @@ body.dark-mode .use-case p {
   text-align: center;
   padding: 80px 20px;
   color: #999;
-  animation: fadeInUp 0.8s ease-out;
 }
 
 .empty-icon {
   font-size: 80px;
   margin-bottom: 20px;
-  animation: bounce 4s ease-in-out infinite;
   filter: drop-shadow(0 4px 8px rgba(102, 126, 234, 0.2)) drop-shadow(0 0 20px rgba(255, 182, 193, 0.4));
   position: relative;
 }
 
 .empty-icon::before {
-  content: '✨';
-  position: absolute;
-  top: -20px;
-  left: -20px;
-  font-size: 30px;
-  animation: sparkle 2s ease-in-out infinite;
+  display: none;
 }
 
 .empty-icon::after {
-  content: '💖';
-  position: absolute;
-  top: -15px;
-  right: -15px;
-  font-size: 25px;
-  animation: sparkle 2.5s ease-in-out infinite 0.5s;
+  display: none;
 }
 
 @keyframes icon-spin {
@@ -1029,7 +1076,6 @@ body.dark-mode .use-case p {
   color: #ff69b4;
   font-weight: 800;
   text-shadow: 0 2px 4px rgba(255, 182, 193, 0.4);
-  animation: title-pulse 4s ease-in-out infinite;
 }
 
 .empty-state p {
@@ -1051,14 +1097,40 @@ body.dark-mode .use-case p {
   border-radius: 16px;
   padding: 24px;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   display: flex;
   flex-direction: column;
   gap: 12px;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(10px);
-  animation: card-entrance 0.5s ease-out backwards;
+  animation: cardSlideIn 0.5s ease-out backwards;
+}
+
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.clipboard-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.clipboard-card:hover::before {
+  left: 100%;
 }
 
 @keyframes card-entrance {
@@ -1091,17 +1163,14 @@ body.dark-mode .use-case p {
   border-color: #667eea;
   box-shadow: 
     0 15px 40px rgba(102, 126, 234, 0.3),
-    0 0 0 2px rgba(102, 126, 234, 0.2) inset,
-    0 0 30px rgba(102, 126, 234, 0.2),
-    0 0 60px rgba(102, 126, 234, 0.1);
-  transform: translateY(-8px) scale(1.03) rotate(0.5deg);
+    0 0 0 3px rgba(102, 126, 234, 0.2) inset,
+    0 0 35px rgba(102, 126, 234, 0.2);
+  transform: translateY(-8px) scale(1.02);
   background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(240, 244, 255, 0.9) 100%);
-  animation: card-hover-pulse 1s ease-in-out infinite;
 }
 
-@keyframes card-hover-pulse {
-  0%, 100% { box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3), 0 0 0 2px rgba(102, 126, 234, 0.2) inset, 0 0 30px rgba(102, 126, 234, 0.2), 0 0 60px rgba(102, 126, 234, 0.1); }
-  50% { box-shadow: 0 18px 45px rgba(102, 126, 234, 0.4), 0 0 0 3px rgba(102, 126, 234, 0.3) inset, 0 0 40px rgba(102, 126, 234, 0.3), 0 0 80px rgba(102, 126, 234, 0.15); }
+.clipboard-card:active {
+  transform: translateY(-4px) scale(1.01);
 }
 
 .card-preview {
